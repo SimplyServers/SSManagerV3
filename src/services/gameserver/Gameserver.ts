@@ -2,10 +2,13 @@ import {Game, GameData} from "../game/Game";
 import {FSUtils} from "../../utils/FSUtils";
 import * as path from "path";
 import {SSManagerV3} from "../../SSManagerV3";
-import EventEmitter = NodeJS.EventEmitter;
 import {PluginData} from "../plugin/Plugin";
 import {FilesystemHelper} from "./helpers/FilesystemHelper";
 import {DockerHelper} from "./helpers/DockerHelper";
+import * as fs from "fs-extra";
+import * as proc from "child_process";
+import * as util from "util";
+import {EventEmitter} from 'events';
 
 export enum ServerStatus {
     RUNNING = "RUNNING",
@@ -32,7 +35,8 @@ export interface GameserverData {
     },
     plugins: Array<PluginData>,
     maxPlayers: number,
-    isInstalled: boolean
+    isInstalled: boolean,
+    password: string
 }
 
 export class Gameserver extends EventEmitter{
@@ -55,9 +59,10 @@ export class Gameserver extends EventEmitter{
 
     static loadServers = async () => {
         Gameserver.loadedServers = [];
-        const data = await FSUtils.dirToJson(path.join(SSManagerV3.instance.root, "localstorage/servers")) as unknown as Array<GameserverData>;
+        const data = await FSUtils.dirToJson(path.join(SSManagerV3.instance.root, "../localstorage/servers")) as unknown as Array<GameserverData>;
         data.forEach(serverData => {
             Gameserver.loadedServers.push(new Gameserver(serverData));
+            console.log("Loaded server: " + JSON.stringify(serverData));
         })
     };
 
@@ -147,6 +152,7 @@ export class Gameserver extends EventEmitter{
     private _plugins: Array<PluginData>;
     private _isInstalled: boolean;
     private _maxPlayers: number;
+    private password: string;
 
     private _fsHelper: FilesystemHelper;
     private _dockerHelper: DockerHelper;
@@ -185,6 +191,7 @@ export class Gameserver extends EventEmitter{
             plugins: this.plugins,
             isInstalled: this.isInstalled,
             maxPlayers: this.maxPlayers,
+            password: this.password
         }
     };
 
@@ -195,4 +202,32 @@ export class Gameserver extends EventEmitter{
             blocked: this.isBlocked
         }
     };
+
+    public init = async () => {
+        await this.saveData();
+
+        await new Promise((resolve, reject) => {
+            proc.exec(util.format(path.join(SSManagerV3.instance.root, "/bashScripts/newUser.sh") + " %s %s", this.id, this.password), (err) => {
+                if (err) {
+                    return reject(err);
+                }
+                else {
+                    return resolve();
+                }
+            });
+        });
+
+        await this.dockerHelper.create();
+        await this.saveIdentityFile();
+    };
+
+    public saveData = async () => {
+        await fs.outputJson(path.join(SSManagerV3.instance.root, "../localstorage/servers/", this.id + ".json"), this.exportData());
+    };
+
+    public saveIdentityFile = async () => {
+        await fs.outputJson(path.join(this.fsHelper.getRoot(), "/identity.json"), {
+            id: this.id
+        });
+    }
 }

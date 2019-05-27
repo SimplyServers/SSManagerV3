@@ -2,6 +2,7 @@ import {FSUtils} from "../../utils/FSUtils";
 
 import * as path from "path";
 import {SSManagerV3} from "../../SSManagerV3";
+import {Gameserver, ServerStatus} from "../gameserver/Gameserver";
 
 export interface VerifyFile {
     path: string;
@@ -39,9 +40,10 @@ export class Game {
 
     static loadGames = async () => {
         Game.loadedGames = [];
-        const data = await FSUtils.dirToJson(path.join(SSManagerV3.instance.root, "localstorage/games")) as unknown as Array<GameData>;
+        const data = await FSUtils.dirToJson(path.join(SSManagerV3.instance.root, "../localstorage/games")) as unknown as Array<GameData>;
         data.forEach(gameData => {
             Game.loadedGames.push(new Game(gameData));
+            console.log("Loaded game: " + JSON.stringify(gameData));
         })
     };
 
@@ -107,8 +109,22 @@ export class Game {
         this._verify = gameData.verify;
     }
 
-    public installGame = async () => {
-        // TODO: do
+    public installGame = async (server: Gameserver) => {
+        if (server.isBlocked) {
+            throw new Error("SERVER_LOCKED")
+        }
+
+        if(server.isInstalled) {
+            throw new Error("ALREADY_INSTALLED")
+        }
+
+        if(server.status !== ServerStatus.STOPPED) {
+            throw new Error("SERVER_NOT_OFF")
+        }
+
+        server.isBlocked = true;
+        await FSUtils.executeCommandSeries(server.fsHelper.getRoot(), this.install, server.id);
+        server.isBlocked = false;
     };
 
     public reinstallGame = async () => {

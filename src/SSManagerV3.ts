@@ -1,6 +1,9 @@
 import {Logger} from "./Logger";
 
 import * as configData from "../config.json";
+import {Gameserver} from "./services/gameserver/Gameserver";
+import {Plugin} from "./services/plugin/Plugin";
+import {Game} from "./services/game/Game";
 
 export interface Config {
     servers: {
@@ -51,8 +54,15 @@ export class SSManagerV3 {
     private _config: Config;
 
     constructor(){
+        SSManagerV3.instance = this;
         this._config = configData as Config;
         this._logger = new Logger();
+    }
+
+    public init = async () => {
+        await Plugin.loadPlugins();
+        await Game.loadGames();
+        await Gameserver.loadServers();
     }
 
 }

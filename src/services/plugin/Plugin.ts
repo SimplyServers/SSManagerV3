@@ -17,9 +17,10 @@ export class Plugin {
 
     static loadPlugins = async () => {
         Plugin.loadedPlugins = [];
-        const data = await FSUtils.dirToJson(path.join(SSManagerV3.instance.root, "localstorage/plugins")) as unknown as Array<PluginData>;
+        const data = await FSUtils.dirToJson(path.join(SSManagerV3.instance.root, "../localstorage/plugins")) as unknown as Array<PluginData>;
         data.forEach(pluginData => {
             Plugin.loadedPlugins.push(new Plugin(pluginData));
+            console.log("Loaded plugin: " + JSON.stringify(pluginData));
         })
     };
 

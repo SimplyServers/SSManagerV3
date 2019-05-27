@@ -2,7 +2,34 @@ import * as path from "path";
 import * as fs from "fs-extra";
 import {SSManagerV3} from "../SSManagerV3";
 
+import * as Pty from "node-pty";
+
 export class FSUtils {
+
+    static executeCommandSeries = async (currentDirectory: string, commands: Array<string>, user: string) => {
+        await Promise.all(commands.map(async (command) => {
+            const shell = "su";
+            const params = [
+                "-s",
+                "/bin/bash",
+                "-l",
+                user,
+                "-c",
+                "cd " + currentDirectory + " && " + command
+            ];
+
+            await new Promise(resolve => {
+                // Typings are incorrect.
+                // Look at https://github.com/Microsoft/node-pty/blob/master/src/index.ts and https://github.com/Microsoft/node-pty/blob/master/typings/node-pty.d.ts
+                // @ts-ignore
+                const installerProcess = Pty.spawn(shell, params);
+                installerProcess.on("exit", () => {
+                    return resolve();
+                });
+            })
+        }));
+    };
+
     static dirToJson = async (dataFolder: string): Promise<any> => {
         // Get all files in a directory
         const filesList = await fs.readdir(dataFolder);

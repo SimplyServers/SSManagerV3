@@ -24,12 +24,12 @@ export class DockerHelper extends Helper{
 
     // General stuff
 
-    protected killContainer = async () => {
+    public killContainer = async () => {
         // TODO: cant find any docs on alternatives or why this is deprecated.
         await this.dockerContainer.stop();
     };
 
-    protected ensureStopped = async (): Promise<boolean> => {
+    public ensureStopped = async (): Promise<boolean> => {
         const data = await this.dockerContainer.inspect();
         if (data.State.Status === "running") {
             this.parentServer.status = ServerStatus.MGTHALT;
@@ -39,17 +39,17 @@ export class DockerHelper extends Helper{
         return false;
     };
 
-    protected rebuild = async () => {
+    public rebuild = async () => {
         await this.remove();
         await this.create();
     };
 
-    protected remove = async () => {
+    public remove = async () => {
         await this.ensureStopped();
         this.dockerContainer.remove();
     };
 
-    protected create = async () => {
+    public create = async () => {
         let image;
         if (this.parentServer.game.dockerType === "java_generic") {
             image = "java_generic";
@@ -126,7 +126,7 @@ export class DockerHelper extends Helper{
         await this.dockerController.createContainer(newContainer);
     };
 
-    protected updateContainer = async () => {
+    public updateContainer = async () => {
         await this.ensureStopped();
 
         await this.dockerContainer.update({
@@ -141,7 +141,7 @@ export class DockerHelper extends Helper{
         });
     };
 
-    protected start = async () => {
+    public start = async () => {
         await this.ensureStopped();
 
         // Get our container up and running
@@ -178,7 +178,7 @@ export class DockerHelper extends Helper{
 
     // Logging
 
-    protected writeToProcess = (data: string) => {
+    public writeToProcess = (data: string) => {
         if (!this.stdinSteam) {
             return;
         }
@@ -187,7 +187,7 @@ export class DockerHelper extends Helper{
         this.stdinSteam.resume();
     };
 
-    protected initFileLog = async () => {
+    public initFileLog = async () => {
         if (this.parentServer.game.logging.logFile.useLogFile) {
             let hadLogError = false;
 
@@ -209,7 +209,7 @@ export class DockerHelper extends Helper{
         }
     };
 
-    protected closeStreams = () => {
+    public closeStreams = () => {
         if (this.loggerStream) {
             this.loggerStream.unwatch();
         }
@@ -228,7 +228,7 @@ export class DockerHelper extends Helper{
         this.stdinSteam = undefined;
     };
 
-    protected initContainerShell = async () => {
+    public initContainerShell = async () => {
         this.shellStream = await this.dockerContainer.attach({
             "Detach": false,
             "Tty": false,
