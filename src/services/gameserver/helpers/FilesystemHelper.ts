@@ -19,7 +19,7 @@ export class FilesystemHelper extends Helper{
         super(server);
     }
 
-    public getDirectoryContents = async (relativePath: string) => {
+    protected getDirectoryContents = async (relativePath: string) => {
         if (this.parentServer.isBlocked) {
             throw new Error("SERVER_LOCKED")
         }
@@ -50,7 +50,7 @@ export class FilesystemHelper extends Helper{
         }))
     };
 
-    public getFileContents = async (relativePath: string) => {
+    protected getFileContents = async (relativePath: string) => {
         if (this.parentServer.isBlocked) {
             throw new Error("SERVER_LOCKED")
         }
@@ -69,7 +69,7 @@ export class FilesystemHelper extends Helper{
         return await fs.readFile(fullPath, "utf8"); // Make sure we read the file as utf8!
     };
 
-    public writeFile = async (relativePath: string, contents: string) => {
+    protected writeFile = async (relativePath: string, contents: string) => {
         if (this.parentServer.isBlocked) {
             throw new Error("SERVER_LOCKED")
         }
@@ -88,7 +88,7 @@ export class FilesystemHelper extends Helper{
         await fs.chown(fullPath, userid.uid(this.parentServer.id), userid.gid(this.parentServer.id));
     };
 
-    public removeFile = async (relativePath: string) => {
+    protected removeFile = async (relativePath: string) => {
         if (this.parentServer.isBlocked) {
             throw new Error("SERVER_LOCKED")
         }
@@ -102,7 +102,7 @@ export class FilesystemHelper extends Helper{
         await fs.unlink(fullPath);
     };
 
-    public removeFolder = async (relativePath: string) => {
+    protected removeFolder = async (relativePath: string) => {
         if (this.parentServer.isBlocked) {
             throw new Error("SERVER_LOCKED")
         }
@@ -116,7 +116,7 @@ export class FilesystemHelper extends Helper{
         await fs.rmdir(fullPath);
     };
 
-    public ensureFile = async (relativePath: string) => {
+    protected ensureFile = async (relativePath: string) => {
         const fullPath = this.extendPath(relativePath);
 
         await fs.ensureFile(fullPath);
@@ -124,28 +124,28 @@ export class FilesystemHelper extends Helper{
 
     };
 
-    public truncateFile = async (partialPath: string) => {
+    protected truncateFile = async (partialPath: string) => {
         const filePath = this.extendPath(partialPath);
 
         await fs.truncate(filePath, 0);
         await fs.chown(filePath, userid.uid(this.parentServer.id), userid.gid(this.parentServer.id));
     };
 
-    public checkBlocked = (fullPath): boolean => {
-        // return fullPath === path.join("/home", this.server.id, "/public/identity.json")
-        if (fullPath === path.join("/home", this.parentServer.id, "/public/identity.json")) {
+    protected checkBlocked = (fullPath): boolean => {
+        // return fullPath === path.join("/home", this.server.id, "/protected/identity.json")
+        if (fullPath === path.join("/home", this.parentServer.id, "/protected/identity.json")) {
             return true;
         }
-        return this.parentServer.game.logging.logFile.useLogFile && fullPath === path.join("/home", this.parentServer.id, "/public", this.parentServer.game.logging.logFile.path);
+        return this.parentServer.game.logging.logFile.useLogFile && fullPath === path.join("/home", this.parentServer.id, "/protected", this.parentServer.game.logging.logFile.path);
     };
 
-    public getRoot = (): string => {
-        return path.join("/home/", this.parentServer.id, "/public/");
+    protected getRoot = (): string => {
+        return path.join("/home/", this.parentServer.id, "/protected/");
     };
 
-    public extendPath = (partialPath: string): string => {
+    protected extendPath = (partialPath: string): string => {
         const fullPath = path.join(this.getRoot(), path.normalize(querystring.unescape(partialPath)));
-        if (fullPath.indexOf(path.join("/home/", this.parentServer.id, "/public")) !== 0) {
+        if (fullPath.indexOf(path.join("/home/", this.parentServer.id, "/protected")) !== 0) {
             return this.getRoot();
         }
         return fullPath;
