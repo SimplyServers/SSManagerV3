@@ -132,7 +132,6 @@ export class FilesystemHelper extends Helper{
     };
 
     public checkBlocked = (fullPath): boolean => {
-        // return fullPath === path.join("/home", this.server.id, "/public/identity.json")
         if (fullPath === path.join("/home", this.parentServer.id, "/public/identity.json")) {
             return true;
         }

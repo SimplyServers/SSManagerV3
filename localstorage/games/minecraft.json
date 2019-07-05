@@ -34,7 +34,7 @@
   ],
   "startCommand": "java -jar -Xms{memory}M -Xmx{memory}M server.jar -port {port} -s {players}",
   "stopConsoleCommand": "stop",
-  "dockerType": "Java",
+  "dockerType": "java_generic",
   "logging": {
     "logFile": {
       "useLogFile": true,

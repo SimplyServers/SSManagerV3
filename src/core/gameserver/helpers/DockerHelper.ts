@@ -50,6 +50,7 @@ export class DockerHelper extends Helper{
     };
 
     public create = async () => {
+        console.log("Starting docker configure")
         let image;
         if (this.parentServer.game.dockerType === "java_generic") {
             image = "java_generic";
@@ -123,6 +124,8 @@ export class DockerHelper extends Helper{
             "HostPort": this.parentServer.port.toString()
         }];
 
+        console.log("sending create")
+
         await this.dockerController.createContainer(newContainer);
     };
 
@@ -174,7 +177,7 @@ export class DockerHelper extends Helper{
         this.stdinSteam.on("end", () => {
             this.killContainer(); // The container stopped
         });
-    }
+    };
 
     // Logging
 

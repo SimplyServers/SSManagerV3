@@ -2,9 +2,9 @@
 # Server Bucket newUser.sh
 # Creates a user with the specified prams (./newUser.sh <name> <password>)
 
-adduser --disabled-password --disable-login --home /home/$1 --password $2 $1
+adduser --disabled-password --disabled-login --gecos "" $1
 
-usermod -G sftponly $1
+# usermod -G sftponly $1
 
 chown root:$1 /home/$1
 chmod 775 /home/$1

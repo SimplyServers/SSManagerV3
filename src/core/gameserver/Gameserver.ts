@@ -36,7 +36,6 @@ export interface GameserverData {
     plugins: Array<PluginData>,
     maxPlayers: number,
     isInstalled: boolean,
-    password: string
 }
 
 export class Gameserver extends EventEmitter{
@@ -83,6 +82,11 @@ export class Gameserver extends EventEmitter{
     }
 
     set status(value: ServerStatus) {
+        this.emit("status", value);
+
+        //TODO: remove debug
+        SSManagerV3.instance.logger.verbose("[" + this.id + "] Status Update: " + value);
+
         this._status = value;
     }
 
@@ -152,13 +156,17 @@ export class Gameserver extends EventEmitter{
     private _plugins: Array<PluginData>;
     private _isInstalled: boolean;
     private _maxPlayers: number;
-    private password: string;
 
     private _fsHelper: FilesystemHelper;
     private _dockerHelper: DockerHelper;
 
     constructor(data: GameserverData) {
         super();
+
+        if (data.id.toLowerCase() !== data.id) {
+            throw new Error("Id may not contain capital letters");
+        }
+
         this._game = new Game(data.game);
         this._id = data.id;
         this._port = data.port;
@@ -175,11 +183,15 @@ export class Gameserver extends EventEmitter{
     }
 
     public logAnnounce = (data: string) => {
-
+        this.emit("announcement", data);
+        // TODO: remove debug
+        SSManagerV3.instance.logger.verbose("[" + this.id + "] Announcement: " + data);
     };
 
     public logConsole = (data: string) => {
-
+        this.emit("console", data);
+        // TODO: remove debug
+        SSManagerV3.instance.logger.verbose("[" + this.id + "] Console: " + data);
     };
 
     public exportData = (): GameserverData => {
@@ -191,7 +203,6 @@ export class Gameserver extends EventEmitter{
             plugins: this.plugins,
             isInstalled: this.isInstalled,
             maxPlayers: this.maxPlayers,
-            password: this.password
         }
     };
 
@@ -207,7 +218,7 @@ export class Gameserver extends EventEmitter{
         await this.saveData();
 
         await new Promise((resolve, reject) => {
-            proc.exec(util.format(path.join(SSManagerV3.instance.root, "/bashScripts/newUser.sh") + " %s %s", this.id, this.password), (err) => {
+            proc.exec(util.format(path.join(SSManagerV3.instance.root, "/bashScripts/newUser.sh") + " %s", this.id), (err) => {
                 if (err) {
                     return reject(err);
                 }
@@ -216,6 +227,8 @@ export class Gameserver extends EventEmitter{
                 }
             });
         });
+
+        console.log("cb");
 
         await this.dockerHelper.create();
         await this.saveIdentityFile();

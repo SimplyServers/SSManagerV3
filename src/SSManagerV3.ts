@@ -1,9 +1,9 @@
 import {Logger} from "./Logger";
 
 import * as configData from "../config.json";
-import {Gameserver} from "./services/gameserver/Gameserver";
-import {Plugin} from "./services/plugin/Plugin";
-import {Game} from "./services/game/Game";
+import {Gameserver} from "./core/gameserver/Gameserver";
+import {Plugin} from "./core/plugin/Plugin";
+import {Game} from "./core/game/Game";
 
 export interface Config {
     servers: {
@@ -62,7 +62,27 @@ export class SSManagerV3 {
     public init = async () => {
         await Plugin.loadPlugins();
         await Game.loadGames();
+        // This must be loaded last
         await Gameserver.loadServers();
+
+        const testServer = new Gameserver({
+            plugins: [],
+            maxPlayers: 69,
+            isInstalled: false,
+            build: {
+                cpu: 1000,
+                io: 1000,
+                mem: 1000
+            },
+            port: 25565,
+            id: "testing",
+            game: Game.loadedGames[0].exportData()
+        });
+
+
+        await testServer.init();
+        // await Gameserver.loadedServers[0].init();
+
     }
 
 }
