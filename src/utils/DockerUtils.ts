@@ -29,7 +29,9 @@ export class DockerUtils {
                 context: filePath,
                 src: ['Dockerfile']
             }, {t: name}, (err, stream) => {
-                if (err) { return reject(err); }
+                if (err) {
+                    return reject(err);
+                }
 
                 // Pipe the stream to its doom!
                 stream.pipe(devNull(), {end: true});

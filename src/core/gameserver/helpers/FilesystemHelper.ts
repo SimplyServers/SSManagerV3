@@ -4,7 +4,7 @@ import * as path from "path";
 import * as querystring from "querystring";
 import * as userid from "userid";
 
-export class FilesystemHelper extends Helper{
+export class FilesystemHelper extends Helper {
 
     public static readonly MAX_FILE_SIZE = 1000000;
 
@@ -18,7 +18,7 @@ export class FilesystemHelper extends Helper{
             throw new Error("SERVER_LOCKED")
         }
 
-        if(this.checkBlocked(relativePath)) {
+        if (this.checkBlocked(relativePath)) {
             throw new Error("FILE_BLOCKED");
         }
 
@@ -27,7 +27,7 @@ export class FilesystemHelper extends Helper{
 
         // Loop thru each file in an async style and return data about the file
         return await Promise.all(fileList.map(async (file) => {
-            if(this.checkBlocked(file)) return; // Make sure the file isn't supposed to be hidden
+            if (this.checkBlocked(file)) return; // Make sure the file isn't supposed to be hidden
 
             const stat = await fs.stat(file);
 
@@ -49,7 +49,7 @@ export class FilesystemHelper extends Helper{
             throw new Error("SERVER_LOCKED")
         }
 
-        if(this.checkBlocked(relativePath)) {
+        if (this.checkBlocked(relativePath)) {
             throw new Error("FILE_BLOCKED");
         }
 
@@ -68,13 +68,13 @@ export class FilesystemHelper extends Helper{
             throw new Error("SERVER_LOCKED")
         }
 
-        if(this.checkBlocked(relativePath)) {
+        if (this.checkBlocked(relativePath)) {
             throw new Error("FILE_BLOCKED");
         }
 
         const fullPath = this.extendPath(relativePath);
 
-        if(!FilesystemHelper.checkEdible(fullPath)){
+        if (!FilesystemHelper.checkEdible(fullPath)) {
             throw new Error("FILE_NOT_EDIBLE");
         }
 
@@ -87,7 +87,7 @@ export class FilesystemHelper extends Helper{
             throw new Error("SERVER_LOCKED")
         }
 
-        if(this.checkBlocked(relativePath)) {
+        if (this.checkBlocked(relativePath)) {
             throw new Error("FILE_BLOCKED");
         }
 
@@ -101,7 +101,7 @@ export class FilesystemHelper extends Helper{
             throw new Error("SERVER_LOCKED")
         }
 
-        if(this.checkBlocked(relativePath)) {
+        if (this.checkBlocked(relativePath)) {
             throw new Error("FILE_BLOCKED");
         }
 

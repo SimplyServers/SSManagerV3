@@ -97,7 +97,7 @@ export class Game {
     private readonly _logging: LoggingOptions;
     private readonly _verify: Array<VerifyFile>;
 
-    constructor(gameData: GameData){
+    constructor(gameData: GameData) {
         this._name = gameData.name;
         this._gamedig = gameData.gamedig;
         this._install = gameData.install;
@@ -114,11 +114,11 @@ export class Game {
             throw new Error("SERVER_LOCKED")
         }
 
-        if(server.isInstalled) {
+        if (server.isInstalled) {
             throw new Error("ALREADY_INSTALLED")
         }
 
-        if(server.status !== ServerStatus.STOPPED) {
+        if (server.status !== ServerStatus.STOPPED) {
             throw new Error("SERVER_NOT_OFF")
         }
 
@@ -137,11 +137,11 @@ export class Game {
             throw new Error("SERVER_LOCKED")
         }
 
-        if(server.isInstalled) {
+        if (server.isInstalled) {
             throw new Error("ALREADY_INSTALLED")
         }
 
-        if(server.status !== ServerStatus.STOPPED) {
+        if (server.status !== ServerStatus.STOPPED) {
             throw new Error("SERVER_NOT_OFF")
         }
 
@@ -154,11 +154,11 @@ export class Game {
             throw new Error("SERVER_LOCKED")
         }
 
-        if(server.isInstalled) {
+        if (server.isInstalled) {
             throw new Error("ALREADY_INSTALLED")
         }
 
-        if(server.status !== ServerStatus.STOPPED) {
+        if (server.status !== ServerStatus.STOPPED) {
             throw new Error("SERVER_NOT_OFF")
         }
 

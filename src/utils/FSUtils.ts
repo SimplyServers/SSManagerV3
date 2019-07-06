@@ -12,8 +12,7 @@ export class FSUtils {
             proc.exec(format, (err) => {
                 if (err) {
                     return reject(err);
-                }
-                else {
+                } else {
                     return resolve();
                 }
             });
@@ -21,7 +20,7 @@ export class FSUtils {
     };
 
     static executeCommandSeries = async (currentDirectory: string, commands: Array<string>, user: string) => {
-        console.log("yoooo wtf: " + currentDirectory + ", commands: " + commands + ", usr: " + user)
+        console.log("yoooo wtf: " + currentDirectory + ", commands: " + commands + ", usr: " + user);
 
         console.log("test: ", commands);
 
@@ -43,7 +42,7 @@ export class FSUtils {
                 // @ts-ignore
                 const installerProcess = Pty.spawn(shell, params);
 
-                installerProcess.on("data", data => console.log("[debug] " + data))
+                installerProcess.on("data", data => console.log("[debug] " + data));
 
                 installerProcess.on("exit", () => {
                     return resolve();

@@ -2,7 +2,6 @@ import {FSUtils} from "../../utils/FSUtils";
 
 import * as path from "path";
 import {SSManagerV3} from "../../SSManagerV3";
-import {GameserverData} from "../gameserver/Gameserver";
 
 export interface PluginData {
     game: string,
@@ -49,7 +48,7 @@ export class Plugin {
     private readonly _install: Array<string>;
     private readonly _remove: Array<string>;
 
-    constructor(pluginData: PluginData){
+    constructor(pluginData: PluginData) {
         this._game = pluginData.game;
         this._name = pluginData.name;
         this._install = pluginData.install;

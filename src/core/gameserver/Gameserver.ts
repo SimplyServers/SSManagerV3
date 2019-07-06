@@ -6,7 +6,6 @@ import {PluginData} from "../plugin/Plugin";
 import {FilesystemHelper} from "./helpers/FilesystemHelper";
 import {DockerHelper} from "./helpers/DockerHelper";
 import * as fs from "fs-extra";
-import * as proc from "child_process";
 import * as util from "util";
 import {EventEmitter} from 'events';
 
@@ -38,7 +37,7 @@ export interface GameserverData {
     isInstalled: boolean,
 }
 
-export class Gameserver extends EventEmitter{
+export class Gameserver extends EventEmitter {
     get dockerHelper(): DockerHelper {
         return this._dockerHelper;
     }
@@ -46,6 +45,7 @@ export class Gameserver extends EventEmitter{
     set dockerHelper(value: DockerHelper) {
         this._dockerHelper = value;
     }
+
     get fsHelper(): FilesystemHelper {
         return this._fsHelper;
     }
@@ -197,7 +197,7 @@ export class Gameserver extends EventEmitter{
     };
 
     public exportData = (): GameserverData => {
-        return  {
+        return {
             game: this.game.exportData(),
             id: this.id,
             port: this.port,

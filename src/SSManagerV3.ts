@@ -29,6 +29,7 @@ export class SSManagerV3 {
     set config(value: Config) {
         this._config = value;
     }
+
     static get instance(): SSManagerV3 {
         return this._instance;
     }
@@ -54,7 +55,7 @@ export class SSManagerV3 {
     private _logger: Logger;
     private _config: Config;
 
-    constructor(){
+    constructor() {
         SSManagerV3.instance = this;
         this._config = configData as Config;
         this._logger = new Logger();

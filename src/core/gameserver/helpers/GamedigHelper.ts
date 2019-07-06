@@ -3,7 +3,7 @@ import {Gameserver} from "../Gameserver";
 
 import * as gamedig from "gamedig";
 
-export class GamedigHelper extends Helper{
+export class GamedigHelper extends Helper {
 
     static PING_TIME: number = 30000;
     static HOST_NAME: string = "127.0.0.1";
@@ -25,7 +25,7 @@ export class GamedigHelper extends Helper{
     };
 
     public stop = () => {
-        if(this.pingerInterval) {
+        if (this.pingerInterval) {
             clearInterval(this.pingerInterval);
         }
 
@@ -34,7 +34,7 @@ export class GamedigHelper extends Helper{
     };
 
     private ping = async () => {
-        if(this.enabled) {
+        if (this.enabled) {
             return;
         }
 
@@ -44,7 +44,7 @@ export class GamedigHelper extends Helper{
                 host: GamedigHelper.HOST_NAME,
                 port: this.parentServer.port
             });
-        }catch (e) {
+        } catch (e) {
             if (this.failedPings >= 3) {
                 await this.parentServer.dockerHelper.killContainer();
                 this.parentServer.logAnnounce("Your server has been killed due to the server not responding.");

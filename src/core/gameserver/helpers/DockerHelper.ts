@@ -5,14 +5,14 @@ import * as Dockerode from "dockerode";
 import * as userid from "userid";
 import * as Tail from "tail";
 
-export class DockerHelper extends Helper{
+export class DockerHelper extends Helper {
     private shellStream;
     private stdinSteam;
     private loggerStream;
     private dockerContainer;
     private dockerController;
 
-    constructor(parent: Gameserver){
+    constructor(parent: Gameserver) {
         super(parent);
 
         this.dockerController = new Dockerode({
@@ -50,7 +50,7 @@ export class DockerHelper extends Helper{
     };
 
     public create = async () => {
-        console.log("Starting docker configure")
+        console.log("Starting docker configure");
         let image;
         if (this.parentServer.game.dockerType === "java_generic") {
             image = "java_generic";
@@ -124,7 +124,7 @@ export class DockerHelper extends Helper{
             "HostPort": this.parentServer.port.toString()
         }];
 
-        console.log("sending create")
+        console.log("sending create");
 
         await this.dockerController.createContainer(newContainer);
     };
@@ -168,7 +168,7 @@ export class DockerHelper extends Helper{
         // Execute commands on container
         const exec = await this.dockerContainer.exec(dockerOptions);
         // Get the stream created by the process
-        this.stdinSteam = (await exec.start({ stream: true, stdout: true, stderr: true, stdin: true })).output;
+        this.stdinSteam = (await exec.start({stream: true, stdout: true, stderr: true, stdin: true})).output;
         this.stdinSteam.setEncoding("utf8");
 
         await this.initContainerShell();
