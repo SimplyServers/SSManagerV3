@@ -4,6 +4,7 @@ import * as configData from "../config.json";
 import {Gameserver} from "./core/gameserver/Gameserver";
 import {Plugin} from "./core/plugin/Plugin";
 import {Game} from "./core/game/Game";
+import {DockerUtils} from "./utils/DockerUtils";
 
 export interface Config {
     servers: {
@@ -60,6 +61,10 @@ export class SSManagerV3 {
     }
 
     public init = async () => {
+        // Check Docker
+        const dockerManager = new DockerUtils();
+        await dockerManager.bootstrap();
+
         await Plugin.loadPlugins();
         await Game.loadGames();
         // This must be loaded last
