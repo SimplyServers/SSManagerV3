@@ -226,6 +226,18 @@ export class Gameserver extends EventEmitter{
         await this.saveIdentityFile();
     };
 
+    public start = async () => {
+
+    };
+
+    public stop = async () => {
+
+    };
+
+    public kill = async () => {
+
+    };
+
     public saveData = async () => {
         await fs.outputJson(path.join(SSManagerV3.instance.root, "../localstorage/servers/", this.id + ".json"), this.exportData());
     };
