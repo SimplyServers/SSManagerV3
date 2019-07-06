@@ -19,7 +19,7 @@
     "dockerode-utils": "0.0.7",
     "express": "^4.17.0",
     "fs-extra": "^8.0.1",
-    "gamedig": "github:SimplyServers/node-gamedig",
+    "gamedig": "^2.0.14",
     "node-pty": "^0.8.1",
     "os-utils": "0.0.14",
     "query-string": "^6.5.0",

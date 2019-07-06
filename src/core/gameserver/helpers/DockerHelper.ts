@@ -212,7 +212,7 @@ export class DockerHelper extends Helper{
         }
     };
 
-    public closeStreams = () => {
+    private closeStreams = () => {
         if (this.loggerStream) {
             this.loggerStream.unwatch();
         }
@@ -242,11 +242,10 @@ export class DockerHelper extends Helper{
         });
 
         // This is always enabled
-        // LMAO WTF! WHY IS THIS AT _.output AND WHY IS IT NOT DOCUMENTED
-        this.shellStream._output.on("end", () => {
+        this.shellStream._output.on("end", () => { // I don't care that its supposed to be private I want it
             this.closeStreams();
             this.parentServer.status = ServerStatus.STOPPED;
-        }).on("error", (data) => {
+        }).on("error", data => {
             this.parentServer.logAnnounce("Your servers container encountered an error; " + data);
         });
 

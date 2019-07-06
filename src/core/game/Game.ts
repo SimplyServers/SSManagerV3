@@ -127,6 +127,8 @@ export class Game {
 
         server.isBlocked = true;
         await FSUtils.executeCommandSeries(server.fsHelper.getRoot(), this.install, server.id);
+        server.isInstalled = true;
+        await server.saveData();
         server.isBlocked = false;
     };
 

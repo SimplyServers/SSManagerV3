@@ -1,10 +1,8 @@
 import {Helper} from "./Helper";
-import {Gameserver} from "../Gameserver";
 import * as fs from "fs-extra";
 import * as path from "path";
 import * as querystring from "querystring";
 import * as userid from "userid";
-
 
 export class FilesystemHelper extends Helper{
 
@@ -14,10 +12,6 @@ export class FilesystemHelper extends Helper{
         const ext = path.extname(fullPath);
         return (ext === ".txt" || ext === ".properties" || ext === ".nbt" || ext === ".yaml" || ext === ".json" || ext === ".yml" || ext === ".log");
     };
-
-    constructor(server: Gameserver) {
-        super(server);
-    }
 
     public getDirectoryContents = async (relativePath: string) => {
         if (this.parentServer.isBlocked) {
