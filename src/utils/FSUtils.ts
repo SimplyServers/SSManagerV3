@@ -3,11 +3,30 @@ import * as fs from "fs-extra";
 import {SSManagerV3} from "../SSManagerV3";
 
 import * as Pty from "node-pty";
+import * as proc from "child_process";
 
 export class FSUtils {
 
+    static executeCommand = async (format: string) => {
+        await new Promise((resolve, reject) => {
+            proc.exec(format, (err) => {
+                if (err) {
+                    return reject(err);
+                }
+                else {
+                    return resolve();
+                }
+            });
+        });
+    };
+
     static executeCommandSeries = async (currentDirectory: string, commands: Array<string>, user: string) => {
-        await Promise.all(commands.map(async (command) => {
+        console.log("yoooo wtf: " + currentDirectory + ", commands: " + commands + ", usr: " + user)
+
+        console.log("test: ", commands);
+
+
+        for (let commandIndex in commands) {
             const shell = "su";
             const params = [
                 "-s",
@@ -15,7 +34,7 @@ export class FSUtils {
                 "-l",
                 user,
                 "-c",
-                "cd " + currentDirectory + " && " + command
+                "cd " + currentDirectory + " && " + commands[commandIndex]
             ];
 
             await new Promise(resolve => {
@@ -23,11 +42,18 @@ export class FSUtils {
                 // Look at https://github.com/Microsoft/node-pty/blob/master/src/index.ts and https://github.com/Microsoft/node-pty/blob/master/typings/node-pty.d.ts
                 // @ts-ignore
                 const installerProcess = Pty.spawn(shell, params);
+
+                installerProcess.on("data", data => console.log("[debug] " + data))
+
                 installerProcess.on("exit", () => {
                     return resolve();
                 });
-            })
-        }));
+            });
+        }
+
+        // await Promise.all(commands.map(async command => {
+
+        // }));
     };
 
     static dirToJson = async (dataFolder: string): Promise<any> => {

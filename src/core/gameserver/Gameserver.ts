@@ -180,6 +180,8 @@ export class Gameserver extends EventEmitter{
 
         this._fsHelper = new FilesystemHelper(this);
         this._dockerHelper = new DockerHelper(this); // This should be inited last!
+
+        Gameserver.loadedServers.push(this); // Add the server to the loaded servers listing!
     }
 
     public logAnnounce = (data: string) => {
@@ -217,17 +219,7 @@ export class Gameserver extends EventEmitter{
     public init = async () => {
         await this.saveData();
 
-        await new Promise((resolve, reject) => {
-            proc.exec(util.format(path.join(SSManagerV3.instance.root, "/bashScripts/newUser.sh") + " %s", this.id), (err) => {
-                if (err) {
-                    return reject(err);
-                }
-                else {
-                    return resolve();
-                }
-            });
-        });
-
+        await FSUtils.executeCommand(util.format(path.join(SSManagerV3.instance.root, "/bashScripts/newUser.sh") + " %s", this.id));
         console.log("cb");
 
         await this.dockerHelper.create();
@@ -236,6 +228,10 @@ export class Gameserver extends EventEmitter{
 
     public saveData = async () => {
         await fs.outputJson(path.join(SSManagerV3.instance.root, "../localstorage/servers/", this.id + ".json"), this.exportData());
+    };
+
+    public clearServer = async () => {
+        await FSUtils.executeCommand(util.format(path.join(SSManagerV3.instance.root, "/bashScripts/clearUser.sh") + " %s", this.id));
     };
 
     public saveIdentityFile = async () => {

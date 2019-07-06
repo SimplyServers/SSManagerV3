@@ -86,7 +86,8 @@ export class SSManagerV3 {
 
 
         await testServer.init();
-        // await Gameserver.loadedServers[0].init();
+        console.log("executing test for installing");
+        await Gameserver.loadedServers[0].game.installGame(Gameserver.loadedServers[0]);
 
     }
 

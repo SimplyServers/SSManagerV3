@@ -5,32 +5,14 @@
     "id": "minecraft"
   },
   "install": [
-    {
-      "type": "shellCommand",
-      "command": "wget https://cdn.getbukkit.org/spigot/spigot-1.13.1.jar"
-    },
-    {
-      "type": "shellCommand",
-      "command": "mv spigot-1.13.1.jar server.jar"
-    },
-    {
-      "type": "shellCommand",
-      "command": "echo 'eula=true' > eula.txt"
-    }
+    "wget https://cdn.getbukkit.org/spigot/spigot-1.13.1.jar",
+    "mv spigot-1.13.1.jar server.jar",
+    "echo 'eula=true' > eula.txt"
   ],
   "update": [
-    {
-      "type": "shellCommand",
-      "command": "rm server.jar"
-    },
-    {
-      "type": "shellCommand",
-      "command": "wget https://cdn.getbukkit.org/spigot/spigot-1.13.1.jar"
-    },
-    {
-      "type": "shellCommand",
-      "command": " mv spigot-1.13.1.jar server.jar"
-    }
+    "rm server.jar",
+    "wget https://cdn.getbukkit.org/spigot/spigot-1.13.1.jar",
+    "mv spigot-1.13.1.jar server.jar"
   ],
   "startCommand": "java -jar -Xms{memory}M -Xmx{memory}M server.jar -port {port} -s {players}",
   "stopConsoleCommand": "stop",

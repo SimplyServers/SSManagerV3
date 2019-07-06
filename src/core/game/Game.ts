@@ -122,17 +122,47 @@ export class Game {
             throw new Error("SERVER_NOT_OFF")
         }
 
+
+        console.log("executing command series... (", this.install, ")");
+
         server.isBlocked = true;
         await FSUtils.executeCommandSeries(server.fsHelper.getRoot(), this.install, server.id);
         server.isBlocked = false;
     };
 
-    public reinstallGame = async () => {
-        // TODO: do
+    public reinstallGame = async (server: Gameserver) => {
+        if (server.isBlocked) {
+            throw new Error("SERVER_LOCKED")
+        }
+
+        if(server.isInstalled) {
+            throw new Error("ALREADY_INSTALLED")
+        }
+
+        if(server.status !== ServerStatus.STOPPED) {
+            throw new Error("SERVER_NOT_OFF")
+        }
+
+        await server.clearServer();
+        await this.installGame(server);
     };
 
-    public updateGame = async () => {
-        // TODO: do
+    public updateGame = async (server: Gameserver) => {
+        if (server.isBlocked) {
+            throw new Error("SERVER_LOCKED")
+        }
+
+        if(server.isInstalled) {
+            throw new Error("ALREADY_INSTALLED")
+        }
+
+        if(server.status !== ServerStatus.STOPPED) {
+            throw new Error("SERVER_NOT_OFF")
+        }
+
+        server.isBlocked = true;
+        await FSUtils.executeCommandSeries(server.fsHelper.getRoot(), this.update, server.id);
+        server.isBlocked = false;
     };
 
     public exportData = (): GameData => {
