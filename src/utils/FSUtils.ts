@@ -4,12 +4,13 @@ import {SSManagerV3} from "../SSManagerV3";
 
 import * as Pty from "node-pty";
 import * as proc from "child_process";
+import {ExecOptions} from "child_process";
 
 export class FSUtils {
 
-    static executeCommand = async (format: string) => {
+    static executeCommand = async (format: string, options: ExecOptions = {}) => {
         await new Promise((resolve, reject) => {
-            proc.exec(format, (err) => {
+            proc.exec(format, options,(err) => {
                 if (err) {
                     return reject(err);
                 } else {

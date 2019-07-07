@@ -14,7 +14,8 @@ export interface Config {
     },
     api: {
         port: number,
-        secret: string
+        secret: string,
+        addr: string
     },
     socket: {
         maxFileSize: number

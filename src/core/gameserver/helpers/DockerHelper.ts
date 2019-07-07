@@ -23,8 +23,6 @@ export class DockerHelper extends Helper {
         this.dockerContainer = this.dockerController.getContainer(this.parentServer.id);
     }
 
-    // General stuff
-
     public killContainer = async () => {
         SSManagerV3.instance.logger.verbose("sending kill to dockerode");
         await this.dockerContainer.kill();
