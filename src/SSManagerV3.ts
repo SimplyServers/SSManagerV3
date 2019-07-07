@@ -18,7 +18,8 @@ export interface Config {
     },
     socket: {
         maxFileSize: number
-    }
+    },
+    dockerSocket: string
 }
 
 export class SSManagerV3 {

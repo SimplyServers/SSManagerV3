@@ -17,7 +17,7 @@ export class DockerHelper extends Helper {
         super(parent);
 
         this.dockerController = new Dockerode({
-            socketPath: "/var/run/docker.sock"
+            socketPath: SSManagerV3.instance.config.dockerSocket
         });
 
         this.dockerContainer = this.dockerController.getContainer(this.parentServer.id);

@@ -9,9 +9,8 @@ export class DockerUtils {
     private readonly dockerController;
 
     constructor() {
-        // TODO: may need to add a config option for specificity this manually
         this.dockerController = new Dockerode({
-            socketPath: "/var/run/docker.sock"
+            socketPath: SSManagerV3.instance.config.dockerSocket
         });
     }
 
