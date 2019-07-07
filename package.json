@@ -5,8 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "run:debug": "NODE_ENV=dev DEBUG=* node --inspect -r ts-node/register main.ts",
-    "run": "node -r ts-node/register main.ts"
+    "run:debug": "NODE_ENV=dev DEBUG=* node --inspect -r ts-node/register main.ts --verbose",
+    "run": "node -r ts-node/register main.ts",
+    "run:verbose": "node -r ts-node/register main.ts --verbose",
+    "run:install": "node -r ts-node/register main.ts --install"
   },
   "keywords": [],
   "author": "",

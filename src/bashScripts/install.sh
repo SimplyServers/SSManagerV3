@@ -6,10 +6,6 @@ apt-get install docker.io
 
 mkdir /opt/ss-static
 
-# Add user group
-addgroup ssuser
-#echo "Match group ssuser\n ChrootDirectory /home/%u\n X11Forwarding no\n AllowTcpForwarding no\n ForceCommand internal-sftp" > /etc/ssh/sshd_config
-
 # Enable drive qutoa on /
 drive=$(df -P /home/ | awk 'NR==2 {print $1}')
 apt-get install quota

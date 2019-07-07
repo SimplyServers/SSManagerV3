@@ -58,10 +58,11 @@ export class SSManagerV3 {
     constructor() {
         SSManagerV3.instance = this;
         this._config = configData as Config;
-        this._logger = new Logger();
     }
 
-    public init = async () => {
+    public init = async (verbose: boolean = false) => {
+        this._logger = new Logger(verbose);
+
         // Check Docker
         const dockerManager = new DockerUtils();
         await dockerManager.bootstrap();
