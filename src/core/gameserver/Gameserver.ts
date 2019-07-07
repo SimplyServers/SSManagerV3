@@ -69,6 +69,20 @@ export class Gameserver extends EventEmitter {
         return Gameserver.loadedServers.find(gameserver => gameserver.id === name);
     };
 
+    static findNextPort = (): number => {
+        if (Gameserver.loadedServers.length === 0) {
+            return SSManagerV3.instance.config.servers.minPort;
+        }
+
+        const port = Math.max(...Gameserver.loadedServers.map(server => server.port), 0) + 1;
+
+        if (port > SSManagerV3.instance.config.servers.maxPort) {
+            return -1; // No available ports
+        }
+
+        return port;
+    };
+
     get game(): Game {
         return this._game;
     }
@@ -168,7 +182,7 @@ export class Gameserver extends EventEmitter {
         super();
 
         if (data.id.toLowerCase() !== data.id) {
-            throw new Error("Id may not contain capital letters");
+            throw new Error("INVALID_ID");
         }
 
         this._game = new Game(data.game);
@@ -228,11 +242,16 @@ export class Gameserver extends EventEmitter {
     };
 
     public start = async () => {
+        await this.dockerHelper.ensureStopped();
         this.status = ServerStatus.STARTING;
         await this.dockerHelper.start();
     };
 
     public stop = async () => {
+        if (this.status !== ServerStatus.RUNNING) {
+            throw new Error("SERVER_NOT_RUNNING")
+        }
+
         this.status = ServerStatus.STOPPING;
         this.dockerHelper.writeToProcess(this.game.stopConsoleCommand); // Lets hope the server decides to listen
         // The server status will be automatically updated when it ends.
@@ -247,10 +266,12 @@ export class Gameserver extends EventEmitter {
     };
 
     public clearServer = async () => {
+        await this.dockerHelper.ensureStopped();
         await FSUtils.executeCommand(util.format(path.join(SSManagerV3.instance.root, "/bashScripts/clearUser.sh") + " %s", this.id));
     };
 
     public deleteServer = async () => {
+        await this.dockerHelper.ensureStopped();
         await FSUtils.executeCommand(util.format(path.join(SSManagerV3.instance.root, "/bashScripts/removeUser.sh") + " %s", this.id));
         await this.dockerHelper.remove();
 

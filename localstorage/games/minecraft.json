@@ -5,6 +5,8 @@
     "id": "minecraft"
   },
   "install": [
+    "wget https://cdn.getbukkit.org/spigot/spigot-1.13.1.jar",
+    "mv spigot-1.13.1.jar server.jar",
     "echo 'eula=true' > eula.txt"
   ],
   "update": [

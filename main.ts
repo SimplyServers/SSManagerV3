@@ -10,9 +10,9 @@ import * as util from "util";
     let install = false;
 
     process.argv.forEach((val, index, arr) => {
-        if (val === "-verbose") {
+        if (val === "--verbose") {
             verbose = true;
-        } else if (val === "install") {
+        } else if (val === "--install") {
             install = true;
         }
     });
@@ -48,7 +48,7 @@ import * as util from "util";
                 }
             });
         });
-        console.log("Starting...");
+        console.log("Starting... (verbose: " + verbose + ")");
 
         const manager = new SSManagerV3();
         await manager.init(verbose); // Ignoring the promise in this case is totally ok

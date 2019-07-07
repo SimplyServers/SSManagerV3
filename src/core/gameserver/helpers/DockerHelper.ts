@@ -25,15 +25,18 @@ export class DockerHelper extends Helper {
     // General stuff
 
     public killContainer = async () => {
-        // TODO: cant find any docs on alternatives or why this is deprecated.
-        await this.dockerContainer.stop();
+        console.log("sending kill to dockerode");
+        await this.dockerContainer.kill();
     };
 
     public ensureStopped = async (): Promise<boolean> => {
+        console.log("ensuring stopped");
+
         const data = await this.dockerContainer.inspect();
         if (data.State.Status === "running") {
+            console.log("seems like server is running, killing the boi");
             this.parentServer.status = ServerStatus.MGTHALT;
-            await this.killContainer;
+            await this.killContainer();
             return true;
         }
         return false;
@@ -45,7 +48,6 @@ export class DockerHelper extends Helper {
     };
 
     public remove = async () => {
-        await this.ensureStopped();
         this.dockerContainer.remove();
     };
 
@@ -130,8 +132,6 @@ export class DockerHelper extends Helper {
     };
 
     public updateContainer = async () => {
-        await this.ensureStopped();
-
         await this.dockerContainer.update({
             BlkioWeight: this.parentServer.build.io,
             CpuQuota: (this.parentServer.build.cpu > 0) ? this.parentServer.build.cpu * 1000 : -1,
@@ -175,6 +175,7 @@ export class DockerHelper extends Helper {
         await this.initFileLog();
 
         this.stdinSteam.on("end", () => {
+            console.log("this isn't supposed to do it");
             this.killContainer(); // The container stopped
         });
     };
@@ -200,6 +201,8 @@ export class DockerHelper extends Helper {
             // We need to make sure these files exist for logging
             await this.parentServer.fsHelper.ensureFile(filePath);
             await this.parentServer.fsHelper.truncateFile(filePath);
+
+            console.log("watching file: " + filePath);
 
             this.loggerStream = new Tail.Tail(this.parentServer.fsHelper.extendPath(filePath));
             this.loggerStream.on("line", this.parentServer.logConsole);
