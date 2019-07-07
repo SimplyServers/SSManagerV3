@@ -36,9 +36,6 @@ export class FSUtils {
                 // Look at https://github.com/Microsoft/node-pty/blob/master/src/index.ts and https://github.com/Microsoft/node-pty/blob/master/typings/node-pty.d.ts
                 // @ts-ignore
                 const installerProcess = Pty.spawn(shell, params);
-
-                installerProcess.on("data", data => console.log("[debug] " + data));
-
                 installerProcess.on("exit", () => {
                     return resolve();
                 });
@@ -55,7 +52,6 @@ export class FSUtils {
         const filesList = await fs.readdir(dataFolder);
 
         const returnArr = [];
-
         // Loop through files list
         await Promise.all(filesList.map(async (fileName) => {
             // Make sure the file is a json file

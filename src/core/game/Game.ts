@@ -43,7 +43,7 @@ export class Game {
         const data = await FSUtils.dirToJson(path.join(SSManagerV3.instance.root, "../localstorage/games")) as unknown as Array<GameData>;
         data.forEach(gameData => {
             Game.loadedGames.push(new Game(gameData));
-            console.log("Loaded game: " + JSON.stringify(gameData));
+            SSManagerV3.instance.logger.verbose("Loaded game: " + JSON.stringify(gameData));
         })
     };
 
@@ -123,7 +123,7 @@ export class Game {
         }
 
 
-        console.log("executing command series... (", this.install, ")");
+        SSManagerV3.instance.logger.verbose("executing command series...");
 
         server.isBlocked = true;
         await FSUtils.executeCommandSeries(server.fsHelper.getRoot(), this.install, server.id);

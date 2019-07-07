@@ -61,7 +61,7 @@ export class Gameserver extends EventEmitter {
         const data = await FSUtils.dirToJson(path.join(SSManagerV3.instance.root, "../localstorage/servers")) as unknown as Array<GameserverData>;
         data.forEach(serverData => {
             Gameserver.loadedServers.push(new Gameserver(serverData));
-            console.log("Loaded server: " + JSON.stringify(serverData));
+            SSManagerV3.instance.logger.verbose("Loaded server: " + JSON.stringify(serverData));
         })
     };
 

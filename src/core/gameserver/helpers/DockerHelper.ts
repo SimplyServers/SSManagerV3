@@ -4,6 +4,7 @@ import {Gameserver, ServerStatus} from "../Gameserver";
 import * as Dockerode from "dockerode";
 import * as userid from "userid";
 import * as Tail from "tail";
+import {SSManagerV3} from "../../../SSManagerV3";
 
 export class DockerHelper extends Helper {
     private shellStream;
@@ -25,16 +26,16 @@ export class DockerHelper extends Helper {
     // General stuff
 
     public killContainer = async () => {
-        console.log("sending kill to dockerode");
+        SSManagerV3.instance.logger.verbose("sending kill to dockerode");
         await this.dockerContainer.kill();
     };
 
     public ensureStopped = async (): Promise<boolean> => {
-        console.log("ensuring stopped");
+        SSManagerV3.instance.logger.verbose("ensuring stopped");
 
         const data = await this.dockerContainer.inspect();
         if (data.State.Status === "running") {
-            console.log("seems like server is running, killing the boi");
+            SSManagerV3.instance.logger.verbose("seems like server is running, killing the boi");
             this.parentServer.status = ServerStatus.MGTHALT;
             await this.killContainer();
             return true;
@@ -52,7 +53,7 @@ export class DockerHelper extends Helper {
     };
 
     public create = async () => {
-        console.log("Starting docker configure");
+        SSManagerV3.instance.logger.verbose("Starting docker configure");
         let image;
         if (this.parentServer.game.dockerType === "java_generic") {
             image = "java_generic";
@@ -126,7 +127,7 @@ export class DockerHelper extends Helper {
             "HostPort": this.parentServer.port.toString()
         }];
 
-        console.log("sending create");
+        SSManagerV3.instance.logger.verbose("sending create");
 
         await this.dockerController.createContainer(newContainer);
     };
@@ -175,7 +176,7 @@ export class DockerHelper extends Helper {
         await this.initFileLog();
 
         this.stdinSteam.on("end", () => {
-            console.log("this isn't supposed to do it");
+            SSManagerV3.instance.logger.verbose("this isn't supposed to do it");
             this.killContainer(); // The container stopped
         });
     };
@@ -202,7 +203,7 @@ export class DockerHelper extends Helper {
             await this.parentServer.fsHelper.ensureFile(filePath);
             await this.parentServer.fsHelper.truncateFile(filePath);
 
-            console.log("watching file: " + filePath);
+            SSManagerV3.instance.logger.verbose("watching file: " + filePath);
 
             this.loggerStream = new Tail.Tail(this.parentServer.fsHelper.extendPath(filePath));
             this.loggerStream.on("line", this.parentServer.logConsole);

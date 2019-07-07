@@ -88,14 +88,14 @@ export class SSManagerV3 {
 
 
         await testServer.init();
-        console.log("executing test for installing");
+        SSManagerV3.instance.logger.verbose("executing test for installing");
         await Gameserver.loadedServers[0].game.installGame(Gameserver.loadedServers[0]);
 
-        console.log("start the server");
+        SSManagerV3.instance.logger.verbose("start the server");
         await Gameserver.loadedServers[0].start();
 
         setInterval(() => {
-            console.log("testing server removal");
+            SSManagerV3.instance.logger.verbose("testing server removal");
             Gameserver.loadedServers[0].deleteServer();
         }, 40000);
     }

@@ -7,7 +7,7 @@ export class Logger {
     }
 
     public info = (data: string) => {
-        console.log("[inf]", data)
+        console.info("[info]", data)
     };
 
     public verbose = (data: string) => {
@@ -15,10 +15,10 @@ export class Logger {
             return;
         }
 
-        console.log("[ver]", data)
+        console.info("[verbose]", data)
     };
 
     public error = (data: any) => {
-        console.log("[err]", data)
+        console.error("[error]", data)
     }
 }
