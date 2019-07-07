@@ -146,6 +146,10 @@ export class Gameserver extends EventEmitter {
         this._maxPlayers = value;
     }
 
+    get dataPath(): string {
+        return path.join(SSManagerV3.instance.root, "../localstorage/servers/", this.id + ".json");
+    }
+
     private _game: Game;
     private _status: ServerStatus;
     private _isBlocked: boolean;
@@ -218,32 +222,47 @@ export class Gameserver extends EventEmitter {
 
     public init = async () => {
         await this.saveData();
-
         await FSUtils.executeCommand(util.format(path.join(SSManagerV3.instance.root, "/bashScripts/newUser.sh") + " %s", this.id));
-        console.log("cb");
-
         await this.dockerHelper.create();
         await this.saveIdentityFile();
     };
 
     public start = async () => {
-
+        this.status = ServerStatus.STARTING;
+        await this.dockerHelper.start();
     };
 
     public stop = async () => {
-
+        this.status = ServerStatus.STOPPING;
+        this.dockerHelper.writeToProcess(this.game.stopConsoleCommand); // Lets hope the server decides to listen
+        // The server status will be automatically updated when it ends.
     };
 
     public kill = async () => {
-
+        await this.dockerHelper.killContainer();
     };
 
     public saveData = async () => {
-        await fs.outputJson(path.join(SSManagerV3.instance.root, "../localstorage/servers/", this.id + ".json"), this.exportData());
+        await fs.outputJson(this.dataPath, this.exportData());
     };
 
     public clearServer = async () => {
         await FSUtils.executeCommand(util.format(path.join(SSManagerV3.instance.root, "/bashScripts/clearUser.sh") + " %s", this.id));
+    };
+
+    public deleteServer = async () => {
+        await FSUtils.executeCommand(util.format(path.join(SSManagerV3.instance.root, "/bashScripts/removeUser.sh") + " %s", this.id));
+        await this.dockerHelper.remove();
+
+        try {
+            await fs.unlink(this.dataPath);
+        } catch (e) {
+            // We can probably ignore this error safely. The file probably hasn't been generated (somehow?)
+        }
+
+        if (Gameserver.loadedServers.includes(this)) {
+            delete Gameserver.loadedServers[Gameserver.loadedServers.findIndex(val => val === this)];
+        }
     };
 
     public saveIdentityFile = async () => {

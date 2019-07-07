@@ -4,7 +4,6 @@ import {Gameserver} from "../Gameserver";
 import * as gamedig from "gamedig";
 
 export class GamedigHelper extends Helper {
-
     static PING_TIME: number = 30000;
     static HOST_NAME: string = "127.0.0.1";
 
@@ -39,11 +38,14 @@ export class GamedigHelper extends Helper {
         }
 
         try {
-            const result = await gamedig.query({
+            await gamedig.query({
                 type: this.parentServer.game.gamedig.id,
                 host: GamedigHelper.HOST_NAME,
                 port: this.parentServer.port
             });
+
+            // If this didn't throw an error we're ok.
+            this.failedPings = 0
         } catch (e) {
             if (this.failedPings >= 3) {
                 await this.parentServer.dockerHelper.killContainer();

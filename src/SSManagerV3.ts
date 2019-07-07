@@ -90,6 +90,9 @@ export class SSManagerV3 {
         console.log("executing test for installing");
         await Gameserver.loadedServers[0].game.installGame(Gameserver.loadedServers[0]);
 
+        console.log("testing server removal");
+        await Gameserver.loadedServers[0].deleteServer();
+
     }
 
 }

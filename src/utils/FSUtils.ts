@@ -20,11 +20,6 @@ export class FSUtils {
     };
 
     static executeCommandSeries = async (currentDirectory: string, commands: Array<string>, user: string) => {
-        console.log("yoooo wtf: " + currentDirectory + ", commands: " + commands + ", usr: " + user);
-
-        console.log("test: ", commands);
-
-
         for (let commandIndex in commands) {
             const shell = "su";
             const params = [
@@ -63,8 +58,8 @@ export class FSUtils {
 
         // Loop through files list
         await Promise.all(filesList.map(async (fileName) => {
-            // Check if the file is the .gitkeep file
-            if (fileName === ".gitkeep") {
+            // Make sure the file is a json file
+            if (path.extname(fileName) !== ".json") {
                 return;
             }
 
@@ -77,8 +72,6 @@ export class FSUtils {
                 return;
             }
 
-            // For debugging
-            // TODO: remove
             SSManagerV3.instance.logger.verbose("Loaded: " + fileName);
 
             // Append the game to the games array.
