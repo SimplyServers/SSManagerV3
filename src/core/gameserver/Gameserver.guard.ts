@@ -1,12 +1,10 @@
 /*
  * Generated type guards for "Gameserver.ts".
  * WARNING: Do not manually change this file.
- * These types were generated with the help of https://github.com/usabilityhub/ts-auto-guard, however, major changes have been made to get things working
  */
-
-import {BuildData, GameserverData} from "./Gameserver";
-import {isPluginData} from "../plugin/PluginData.guard";
-import {isGameData} from "../game/GameData.guard";
+import { BuildData, GameserverData } from "./Gameserver";
+import { isGameData } from "../game/Game.guard";
+import { isPluginData } from "../plugin/Plugin.guard";
 
 function evaluate(
     isCorrect: boolean,
@@ -35,14 +33,17 @@ export function isBuildData(obj: any, argumentName: string = "buildData"): obj i
 export function isGameserverData(obj: any, argumentName: string = "gameserverData"): obj is GameserverData {
     return (
         typeof obj === "object" &&
-        isGameData(obj.game) &&
+        evaluate(isGameData(obj.game) as boolean, `${argumentName}.game`, "import(\"/home/simplyalec/WebstormProjects/SSManagerV3/src/core/game/Game\").GameData", obj.game) &&
         evaluate(typeof obj.id === "string", `${argumentName}.id`, "string", obj.id) &&
         evaluate(typeof obj.port === "number", `${argumentName}.port`, "number", obj.port) &&
         evaluate(typeof obj.build === "object" &&
             evaluate(typeof obj.build.io === "number", `${argumentName}.build.io`, "number", obj.build.io) &&
             evaluate(typeof obj.build.cpu === "number", `${argumentName}.build.cpu`, "number", obj.build.cpu) &&
             evaluate(typeof obj.build.mem === "number", `${argumentName}.build.mem`, "number", obj.build.mem), `${argumentName}.build`, "{ io: number; cpu: number; mem: number; }", obj.build) &&
-        obj.plugins.every(e => isPluginData(e)) &&
+        evaluate(Array.isArray(obj.plugins) &&
+            obj.plugins.every((e: any) =>
+                isPluginData(e) as boolean
+            ), `${argumentName}.plugins`, "import(\"/home/simplyalec/WebstormProjects/SSManagerV3/src/core/plugin/Plugin\").PluginData[]", obj.plugins) &&
         evaluate(typeof obj.maxPlayers === "number", `${argumentName}.maxPlayers`, "number", obj.maxPlayers) &&
         evaluate(typeof obj.isInstalled === "boolean", `${argumentName}.isInstalled`, "boolean", obj.isInstalled)
     )

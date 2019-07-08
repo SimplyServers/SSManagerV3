@@ -1,9 +1,8 @@
 /*
  * Generated type guards for "Game.ts".
  * WARNING: Do not manually change this file.
- * These types were generated with the help of https://github.com/usabilityhub/ts-auto-guard, however, major changes have been made to get things working
  */
-import {GameData, GamedigOptions, LoggingOptions, VerifyFile} from "./Game";
+import { VerifyFile, GamedigOptions, LoggingOptions, GameData } from "./Game";
 
 function evaluate(
     isCorrect: boolean,
@@ -21,7 +20,6 @@ function evaluate(
 }
 
 export function isVerifyFile(obj: any, argumentName: string = "verifyFile"): obj is VerifyFile {
-    console.log("recided obj: ", obj)
     return (
         typeof obj === "object" &&
         evaluate(typeof obj.path === "string", `${argumentName}.path`, "string", obj.path) &&
@@ -51,7 +49,7 @@ export function isGameData(obj: any, argumentName: string = "gameData"): obj is 
     return (
         typeof obj === "object" &&
         evaluate(typeof obj.name === "string", `${argumentName}.name`, "string", obj.name) &&
-        isGamedigOptions(obj.gamedig) &&
+        evaluate(isGamedigOptions(obj.gamedig) as boolean, `${argumentName}.gamedig`, "import(\"/home/simplyalec/WebstormProjects/SSManagerV3/src/core/game/Game\").GamedigOptions", obj.gamedig) &&
         evaluate(Array.isArray(obj.install) &&
             obj.install.every((e: any) =>
                 typeof e === "string"
@@ -63,9 +61,10 @@ export function isGameData(obj: any, argumentName: string = "gameData"): obj is 
         evaluate(typeof obj.startCommand === "string", `${argumentName}.startCommand`, "string", obj.startCommand) &&
         evaluate(typeof obj.stopConsoleCommand === "string", `${argumentName}.stopConsoleCommand`, "string", obj.stopConsoleCommand) &&
         evaluate(typeof obj.dockerType === "string", `${argumentName}.dockerType`, "string", obj.dockerType) &&
-        isLoggingOptions(obj.logging) &&
-        obj.verify.every(e => {
-            return isVerifyFile(e);
-        })
+        evaluate(isLoggingOptions(obj.logging) as boolean, `${argumentName}.logging`, "import(\"/home/simplyalec/WebstormProjects/SSManagerV3/src/core/game/Game\").LoggingOptions", obj.logging) &&
+        evaluate(Array.isArray(obj.verify) &&
+            obj.verify.every((e: any) =>
+                isVerifyFile(e) as boolean
+            ), `${argumentName}.verify`, "import(\"/home/simplyalec/WebstormProjects/SSManagerV3/src/core/game/Game\").VerifyFile[]", obj.verify)
     )
 }

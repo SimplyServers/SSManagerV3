@@ -6,6 +6,7 @@ import {Plugin} from "./core/plugin/Plugin";
 import {Game} from "./core/game/Game";
 import {DockerUtils} from "./utils/DockerUtils";
 
+/** @see {isConfig} ts-auto-guard:type-guard */
 export interface Config {
     servers: {
         pingTime: number,

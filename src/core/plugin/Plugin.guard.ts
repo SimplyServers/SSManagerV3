@@ -1,7 +1,6 @@
 /*
  * Generated type guards for "Plugin.ts".
  * WARNING: Do not manually change this file.
- * These types were generated with the help of https://github.com/usabilityhub/ts-auto-guard.
  */
 import { PluginData } from "./Plugin";
 

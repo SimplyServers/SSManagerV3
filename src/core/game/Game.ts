@@ -4,16 +4,19 @@ import * as path from "path";
 import {SSManagerV3} from "../../SSManagerV3";
 import {Gameserver, ServerStatus} from "../gameserver/Gameserver";
 
+/** @see {isVerifyFile} ts-auto-guard:type-guard */
 export interface VerifyFile {
     path: string;
     hash: string;
 }
 
+/** @see {isGamedigOptions} ts-auto-guard:type-guard */
 export interface GamedigOptions {
     active: boolean,
     id: string
 }
 
+/** @see {isLoggingOptions} ts-auto-guard:type-guard */
 export interface LoggingOptions {
     logFile: {
         useLogFile: boolean,
@@ -22,6 +25,7 @@ export interface LoggingOptions {
     useStdout: boolean,
 }
 
+/** @see {isGameData} ts-auto-guard:type-guard */
 export interface GameData {
     name: string,
     gamedig: GamedigOptions,

@@ -3,6 +3,7 @@ import {FSUtils} from "../../utils/FSUtils";
 import * as path from "path";
 import {SSManagerV3} from "../../SSManagerV3";
 
+/** @see {isPluginData} ts-auto-guard:type-guard */
 export interface PluginData {
     game: string,
     name: string,

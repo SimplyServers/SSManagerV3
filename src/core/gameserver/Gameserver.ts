@@ -17,12 +17,14 @@ export enum ServerStatus {
     MGTHALT = "MGT_HALT"
 }
 
+/** @see {isBuildData} ts-auto-guard:type-guard */
 export interface BuildData {
     io: number,
     cpu: number,
     mem: number
 }
 
+/** @see {isGameserverData} ts-auto-guard:type-guard */
 export interface GameserverData {
     game: GameData,
     id: string,
@@ -117,6 +119,10 @@ export class Gameserver extends EventEmitter {
     }
 
     set id(value: string) {
+        if (value.toLowerCase() !== value) {
+            throw new Error("INVALID_ID");
+        }
+
         this._id = value;
     }
 
@@ -125,6 +131,14 @@ export class Gameserver extends EventEmitter {
     }
 
     set port(value: number) {
+        if (Gameserver.loadedServers.find(gameserver => gameserver.port === value) !== undefined) {
+            throw new Error("PORT_IN_USE");
+        }
+
+        if (value > SSManagerV3.instance.config.servers.maxPort || value < SSManagerV3.instance.config.servers.minPort) {
+            throw new Error("PORT_OUT_OF_RANGE");
+        }
+
         this._port = value;
     }
 
@@ -133,6 +147,11 @@ export class Gameserver extends EventEmitter {
     }
 
     set build(value: BuildData) {
+        // https://docs.docker.com/engine/reference/run/#block-io-bandwidth-blkio-constraint
+        if (value.io < 10 || value.io > 1000) {
+            throw new Error("BIKIO_OUT_OF_RANGE");
+        }
+
         this._build = value;
     }
 
@@ -184,6 +203,20 @@ export class Gameserver extends EventEmitter {
         if (data.id.toLowerCase() !== data.id) {
             throw new Error("INVALID_ID");
         }
+
+        if (Gameserver.loadedServers.find(gameserver => gameserver.port === data.port) !== undefined) {
+            throw new Error("PORT_IN_USE");
+        }
+
+        if (data.port > SSManagerV3.instance.config.servers.maxPort || data.port < SSManagerV3.instance.config.servers.minPort) {
+            throw new Error("PORT_OUT_OF_RANGE");
+        }
+
+        // https://docs.docker.com/engine/reference/run/#block-io-bandwidth-blkio-constraint
+        if (data.build.io < 10 || data.build.io > 1000) {
+            throw new Error("BIKIO_OUT_OF_RANGE");
+        }
+
 
         this._game = new Game(data.game);
         this._id = data.id;
