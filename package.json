@@ -9,7 +9,7 @@
     "run": "node -r ts-node/register main.ts",
     "run:verbose": "node -r ts-node/register main.ts --verbose",
     "run:install": "node -r ts-node/register main.ts --install",
-    "typeguard": "./node_modules/ts-auto-guard/lib/cli.js --debug"
+    "typeguard": "./node_modules/ts-auto-guard/lib/cli.js"
   },
   "keywords": [],
   "author": "",

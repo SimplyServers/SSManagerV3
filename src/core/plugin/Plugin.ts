@@ -18,10 +18,9 @@ export class Plugin {
     static loadPlugins = async () => {
         Plugin.loadedPlugins = [];
         const data = await FSUtils.dirToJson(path.join(SSManagerV3.instance.root, "../localstorage/plugins")) as unknown as Array<PluginData>;
-        data.forEach(pluginData => {
-            Plugin.loadedPlugins.push(new Plugin(pluginData));
-            SSManagerV3.instance.logger.verbose("Loaded plugin: " + JSON.stringify(pluginData));
-        })
+        Plugin.loadedPlugins = data.map(pluginData => new Plugin(pluginData));
+
+        SSManagerV3.instance.logger.verbose("Loaded plugins: " + JSON.stringify(Plugin.loadedPlugins));
     };
 
     static findByName = (name: string): Plugin => {

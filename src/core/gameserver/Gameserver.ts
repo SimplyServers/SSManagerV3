@@ -2,7 +2,7 @@ import {Game, GameData} from "../game/Game";
 import {FSUtils} from "../../utils/FSUtils";
 import * as path from "path";
 import {SSManagerV3} from "../../SSManagerV3";
-import {PluginData} from "../plugin/Plugin";
+import {Plugin, PluginData} from "../plugin/Plugin";
 import {FilesystemHelper} from "./helpers/FilesystemHelper";
 import {DockerHelper} from "./helpers/DockerHelper";
 import * as fs from "fs-extra";
@@ -69,10 +69,10 @@ export class Gameserver extends EventEmitter {
     static loadServers = async () => {
         Gameserver.loadedServers = [];
         const data = await FSUtils.dirToJson(path.join(SSManagerV3.instance.root, "../localstorage/servers")) as unknown as Array<GameserverData>;
-        data.forEach(serverData => {
-            Gameserver.loadedServers.push(new Gameserver(serverData));
-            SSManagerV3.instance.logger.verbose("Loaded server: " + JSON.stringify(serverData));
-        })
+        Gameserver.loadedServers = data.map(gameserverData => new Gameserver(gameserverData));
+
+        SSManagerV3.instance.logger.verbose("Loaded servers: " + JSON.stringify(Gameserver.loadedServers));
+
     };
 
     static findById = (name: string): Gameserver => {
@@ -163,11 +163,11 @@ export class Gameserver extends EventEmitter {
         this._build = value;
     }
 
-    get plugins(): Array<PluginData> {
+    get plugins(): Array<Plugin> {
         return this._plugins;
     }
 
-    set plugins(value: Array<PluginData>) {
+    set plugins(value: Array<Plugin>) {
         this._plugins = value;
     }
 
@@ -198,7 +198,7 @@ export class Gameserver extends EventEmitter {
     private _id: string;
     private _port: number;
     private _build: BuildData;
-    private _plugins: Array<PluginData>;
+    private _plugins: Array<Plugin>;
     private _isInstalled: boolean;
     private _maxPlayers: number;
 
@@ -235,12 +235,11 @@ export class Gameserver extends EventEmitter {
             throw new Error("BIKIO_OUT_OF_RANGE");
         }
 
-
         this._game = new Game(data.game);
         this._id = data.id;
         this._port = data.port;
         this._build = data.build;
-        this._plugins = data.plugins;
+        this._plugins = data.plugins.map(pluginData => new Plugin(pluginData));
         this._isInstalled = data.isInstalled;
         this._maxPlayers = data.maxPlayers;
 
@@ -314,6 +313,53 @@ export class Gameserver extends EventEmitter {
         this.maxPlayers = payload.maxPlayers;
 
         await this.saveData();
+    };
+
+    public getInstalledPluginByName = (name: string): Plugin => {
+        const pluginData = this.plugins.find(plugin => plugin.name === name);
+
+        if (!pluginData) {
+            return undefined;
+        }
+
+        return new Plugin(pluginData);
+    };
+
+    public removePlugin = async (name: string) => {
+        const index = Gameserver.loadedServers.findIndex(val => val === this);
+
+        if (index === -1) {
+            throw new Error("PLUGIN_NOT_INSTALLED")
+        }
+
+        await this.plugins[index].removePlugin();
+
+        delete this.plugins[index];
+        await this.saveData();
+    };
+
+    public installPlugin = async (name: string) => {
+        const index = Gameserver.loadedServers.findIndex(val => val === this);
+
+        if (index !== -1) {
+            throw new Error("PLUGIN_ALREADY_INSTALLED");
+        }
+
+        const plugin = Plugin.findByName(name);
+
+        if (!plugin) {
+            throw new Error("PLUGIN_UNKNOWN");
+        }
+
+        this.plugins.push(plugin);
+        await this.saveData();
+
+        await plugin.installPlugin();
+    };
+
+    public updatePlugin = async (name: string) => {
+        const plugin = this.getInstalledPluginByName(name);
+        await plugin.updatePlugin();
     };
 
     public kill = async () => {
