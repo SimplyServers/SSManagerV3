@@ -97,7 +97,7 @@ export class GameserverController implements IController{
                 max: 60
             })
         ], this.executeCommand);
-        router.get("/gameserver/:server/control/power/:action", [
+        router.get("/gameserver/:server/control/power/:power", [
             SecretMiddleware.requireSecret,
             ServerMiddleware.fillServer,
         ], this.power);

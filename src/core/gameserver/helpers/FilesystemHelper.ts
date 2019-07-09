@@ -25,11 +25,12 @@ export class FilesystemHelper extends Helper {
         const fullPath = this.extendPath(relativePath);
         const fileList = await fs.readdir(fullPath);
 
+
         // Loop thru each file in an async style and return data about the file
         return await Promise.all(fileList.map(async (file) => {
             if (this.checkBlocked(file)) return; // Make sure the file isn't supposed to be hidden
 
-            const stat = await fs.stat(file);
+            const stat = await fs.stat(path.join(fullPath, file));
 
             return {
                 name: file,

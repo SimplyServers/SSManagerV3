@@ -5,6 +5,7 @@ import {Gameserver} from "./core/gameserver/Gameserver";
 import {Plugin} from "./core/plugin/Plugin";
 import {Game} from "./core/game/Game";
 import {DockerUtils} from "./utils/DockerUtils";
+import {APIManager} from "./api/APIManager";
 
 /** @see {isConfig} ts-auto-guard:type-guard */
 export interface Config {
@@ -75,32 +76,35 @@ export class SSManagerV3 {
         // This must be loaded last
         await Gameserver.loadServers();
 
-        const testServer = new Gameserver({
-            plugins: [],
-            maxPlayers: 69,
-            isInstalled: false,
-            build: {
-                cpu: 1000,
-                io: 1000,
-                mem: 1000
-            },
-            port: 25565,
-            id: "testing",
-            game: Game.loadedGames[0].exportData()
-        });
+        const apiManager = new APIManager();
+        await apiManager.loadServer();
 
-
-        await testServer.init();
-        SSManagerV3.instance.logger.verbose("executing test for installing");
-        await Gameserver.loadedServers[0].game.installGame(Gameserver.loadedServers[0]);
-
-        SSManagerV3.instance.logger.verbose("start the server");
-        await Gameserver.loadedServers[0].start();
-
-        setInterval(() => {
-            SSManagerV3.instance.logger.verbose("testing server removal");
-            Gameserver.loadedServers[0].deleteServer();
-        }, 40000);
+        // const testServer = new Gameserver({
+        //     plugins: [],
+        //     maxPlayers: 69,
+        //     isInstalled: false,
+        //     build: {
+        //         cpu: 1000,
+        //         io: 1000,
+        //         mem: 1000
+        //     },
+        //     port: 25565,
+        //     id: "testing",
+        //     game: Game.loadedGames[0].exportData()
+        // });
+        //
+        //
+        // await testServer.init();
+        // SSManagerV3.instance.logger.verbose("executing test for installing");
+        // await Gameserver.loadedServers[0].game.installGame(Gameserver.loadedServers[0]);
+        //
+        // SSManagerV3.instance.logger.verbose("start the server");
+        // await Gameserver.loadedServers[0].start();
+        //
+        // setInterval(() => {
+        //     SSManagerV3.instance.logger.verbose("testing server removal");
+        //     Gameserver.loadedServers[0].deleteServer();
+        // }, 40000);
     }
 
 }

@@ -47,7 +47,7 @@ export class Game {
         const data = await FSUtils.dirToJson(path.join(SSManagerV3.instance.root, "../localstorage/games")) as unknown as Array<GameData>;
         Game.loadedGames = data.map(gameData => new Game(gameData));
 
-        SSManagerV3.instance.logger.verbose("Loaded games: " + JSON.stringify(Game.loadedGames));
+        SSManagerV3.instance.logger.verbose("Loaded games: " + Game.loadedGames.length);
     };
 
     static findByName = (name: string): Game => {

@@ -20,7 +20,7 @@ export class Plugin {
         const data = await FSUtils.dirToJson(path.join(SSManagerV3.instance.root, "../localstorage/plugins")) as unknown as Array<PluginData>;
         Plugin.loadedPlugins = data.map(pluginData => new Plugin(pluginData));
 
-        SSManagerV3.instance.logger.verbose("Loaded plugins: " + JSON.stringify(Plugin.loadedPlugins));
+        SSManagerV3.instance.logger.verbose("Loaded plugins: " + Plugin.loadedPlugins.length);
     };
 
     static findByName = (name: string): Plugin => {
