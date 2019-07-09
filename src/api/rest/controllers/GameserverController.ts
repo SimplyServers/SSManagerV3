@@ -1,11 +1,16 @@
 import {Gameserver} from "../../../core/gameserver/Gameserver";
 import {IController} from "./IController";
-import {Router} from "express";
+import {Request, Router} from "express";
 import {SecretMiddleware} from "../middleware/SecretMiddleware";
 import {ServerMiddleware} from "../middleware/ServerMiddleware";
 import {check} from "express-validator";
-import {SSManagerV3} from "../../../SSManagerV3";
 import {isGameserverData, isServerEditPayload} from "../../../core/gameserver/Gameserver.guard";
+import {FilesystemHelper} from "../../../core/gameserver/helpers/FilesystemHelper";
+
+// Get types for
+export interface RequestAppendedServer extends Request{
+    server: Gameserver
+}
 
 export class GameserverController implements IController{
     initRoutes(router: Router): void {
@@ -142,7 +147,7 @@ export class GameserverController implements IController{
         ], this.getPlugins);
         router.post("/gameserver/add", [
             SecretMiddleware.requireSecret,
-            ServerMiddleware.fillServer,check("config").exists(),
+            check("config").exists(),
             check("config").customSanitizer(input => {
                 if (!isGameserverData(input)) {
                     throw new Error("INVALID_PAYLOAD_GENERIC");
@@ -154,7 +159,7 @@ export class GameserverController implements IController{
         ], this.add);
     }
 
-    public getGameservers = (req, res, next) => {
+    public getGameservers = async (req, res, next) => {
         const servers = Gameserver.loadedServers.map(gameserver => gameserver.getInfo());
 
         return res.json({
@@ -162,18 +167,176 @@ export class GameserverController implements IController{
         });
     };
 
-    public getServer = (req, res, next) => {
+    public getServer = async (req: RequestAppendedServer, res, next) => {
         return res.json({
             server: req.server.getInfo() // The req.server object is made in the middleware
         })
     };
 
-    public checkPathAllowed = (req, res, next) => {
+    public checkPathAllowed = async (req: RequestAppendedServer, res, next) => {
         res.json({
             allowed: (
                 req.server.fsHelper.checkBlocked(req.body.path) &&
-                req.server.fsHelper.checkEdible(req.body.path)
+                FilesystemHelper.checkEdible(req.body.path)
             )
         })
-    }
+    };
+    
+    public writeFile = async (req: RequestAppendedServer, res, next) => {
+        try {
+            await req.server.fsHelper.writeFile(req.body.path, req.body.contents);
+            return res.json({});
+        } catch (e) {
+            return next(e);
+        }
+    };
+    
+    public removeFile = async (req: RequestAppendedServer, res, next) => {
+        try {
+            await req.server.fsHelper.removeFile(req.body.path);
+            return res.json({});
+        } catch (e) {
+            return next(e);
+        }
+    };
+    
+    public removeFolder = async (req: RequestAppendedServer, res, next) => {
+        try {
+            await req.server.fsHelper.removeFolder(req.body.path);
+            return res.json({});
+        } catch (e) {
+            return next(e);
+        }
+    };
+    
+    public getFileContents = async (req: RequestAppendedServer, res, next) => {
+        try {
+            return res.json({
+                contents: await req.server.fsHelper.getFileContents(req.body.path)
+            });
+        }catch (e) {
+            return next(e);
+        }
+    };
+    
+    public getFolderContents = async (req: RequestAppendedServer, res, next) => {
+        try {
+            return res.json({
+                contents: await req.server.fsHelper.getDirectoryContents(req.body.path)
+            });
+        } catch (e) {
+            return next(e);
+        }
+    };
+    
+    public executeCommand = async (req: RequestAppendedServer, res, next) => {
+        try {
+            await req.server.dockerHelper.writeToProcess(req.body.command);
+            return res.json({});
+        } catch (e) {
+            return next(e);
+        }
+    };
+    
+    public power = async (req: RequestAppendedServer, res, next) => {
+        try {
+            switch (req.params.power) {
+                case "on":
+                    await req.server.start();
+                    break;
+                case "off":
+                    await req.server.stop();
+                    break;
+                case "kill":
+                    await req.server.kill();
+                    break;
+                default:
+                    return next(new Error("INVALID_POWER_ACTION"));
+            }
+            return res.json({});
+        } catch (e) {
+            return next(e);
+        }
+    };
+    
+    public reinstall = async (req: RequestAppendedServer, res, next) => {
+        try {
+            await req.server.game.reinstallGame(req.server);
+            return res.json({});
+        } catch (e) {
+            return next(e);
+        }
+    };
+    
+    public edit = async (req: RequestAppendedServer, res, next) => {
+        try {
+            await req.server.edit(req.body.config);
+            return res.json({});
+        } catch (e) {
+            return next(e);
+        }
+    };
+    
+    public update = async (req: RequestAppendedServer, res, next) => {
+        try {
+            await req.server.game.updateGame(req.server);
+            return res.json({});
+        } catch (e) {
+            return next(e);
+        }
+    };
+    
+    public install = async (req: RequestAppendedServer, res, next) => {
+        try {
+            await req.server.game.installGame(req.server);
+            return res.json({});
+        } catch (e) {
+            return next(e);
+        }
+    };
+    
+    public remove = async (req: RequestAppendedServer, res, next) => {
+        try {
+            await req.server.deleteServer();
+            return res.json({});
+        } catch (e) {
+            return next(e);
+        }
+    };
+    
+    public removePlugin = async (req: RequestAppendedServer, res, next) => {
+        try {
+            await req.server.removePlugin(req.body.plugin);
+            return res.json({});
+        } catch (e) {
+            return next(e);
+        }
+    };
+    
+    public installPlugin = async (req: RequestAppendedServer, res, next) => {
+        try {
+            await req.server.installPlugin(req.body.plugin);
+            return res.json({});
+        } catch (e) {
+            return next(e);
+        }
+    };
+    
+    public getPlugins = async (req: RequestAppendedServer, res, next) => {
+        try {
+            return res.json({
+                plugins: req.server.plugins
+            });
+        } catch (e) {
+            return next(e);
+        }
+    };
+    
+    public add = async (req, res, next) => {
+        const newServer = new Gameserver(req.body.config);
+        await newServer.init();
+        return res.json({
+            server: newServer
+        })
+    };
 }

@@ -45,10 +45,9 @@ export class Game {
     static loadGames = async () => {
         Game.loadedGames = [];
         const data = await FSUtils.dirToJson(path.join(SSManagerV3.instance.root, "../localstorage/games")) as unknown as Array<GameData>;
-        data.forEach(gameData => {
-            Game.loadedGames.push(new Game(gameData));
-            SSManagerV3.instance.logger.verbose("Loaded game: " + JSON.stringify(gameData));
-        })
+        Game.loadedGames = data.map(gameData => new Game(gameData));
+
+        SSManagerV3.instance.logger.verbose("Loaded games: " + JSON.stringify(Game.loadedGames));
     };
 
     static findByName = (name: string): Game => {

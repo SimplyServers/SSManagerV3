@@ -6,55 +6,40 @@ import { isGameData } from "../game/Game.guard";
 import { ServerEditPayload, BuildData, GameserverData } from "./Gameserver";
 import { isPluginData } from "../plugin/Plugin.guard";
 
-function evaluate(
-    isCorrect: boolean,
-    varName: string,
-    expected: string,
-    actual: any
-): boolean {
-    if (!isCorrect) {
-        console.error(
-            `${varName} type mismatch, expected: ${expected}, found:`,
-            actual
-        )
-    }
-    return isCorrect
-}
-
-export function isServerEditPayload(obj: any, argumentName: string = "serverEditPayload"): obj is ServerEditPayload {
+export function isServerEditPayload(obj: any, _argumentName?: string): obj is ServerEditPayload {
     return (
         typeof obj === "object" &&
-        evaluate(isBuildData(obj.build) as boolean, `${argumentName}.build`, "import(\"/home/simplyalec/WebstormProjects/SSManagerV3/src/core/gameserver/Gameserver\").BuildData", obj.build) &&
-        evaluate(typeof obj.port === "number", `${argumentName}.port`, "number", obj.port) &&
-        evaluate(typeof obj.maxPlayers === "number", `${argumentName}.maxPlayers`, "number", obj.maxPlayers) &&
-        evaluate(isGameData(obj.game) as boolean, `${argumentName}.game`, "import(\"/home/simplyalec/WebstormProjects/SSManagerV3/src/core/game/Game\").GameData", obj.game)
+        isBuildData(obj.build) as boolean &&
+        typeof obj.port === "number" &&
+        typeof obj.maxPlayers === "number" &&
+        isGameData(obj.game) as boolean
     )
 }
 
-export function isBuildData(obj: any, argumentName: string = "buildData"): obj is BuildData {
+export function isBuildData(obj: any, _argumentName?: string): obj is BuildData {
     return (
         typeof obj === "object" &&
-        evaluate(typeof obj.io === "number", `${argumentName}.io`, "number", obj.io) &&
-        evaluate(typeof obj.cpu === "number", `${argumentName}.cpu`, "number", obj.cpu) &&
-        evaluate(typeof obj.mem === "number", `${argumentName}.mem`, "number", obj.mem)
+        typeof obj.io === "number" &&
+        typeof obj.cpu === "number" &&
+        typeof obj.mem === "number"
     )
 }
 
-export function isGameserverData(obj: any, argumentName: string = "gameserverData"): obj is GameserverData {
+export function isGameserverData(obj: any, _argumentName?: string): obj is GameserverData {
     return (
         typeof obj === "object" &&
-        evaluate(isGameData(obj.game) as boolean, `${argumentName}.game`, "import(\"/home/simplyalec/WebstormProjects/SSManagerV3/src/core/game/Game\").GameData", obj.game) &&
-        evaluate(typeof obj.id === "string", `${argumentName}.id`, "string", obj.id) &&
-        evaluate(typeof obj.port === "number", `${argumentName}.port`, "number", obj.port) &&
-        evaluate(typeof obj.build === "object" &&
-            evaluate(typeof obj.build.io === "number", `${argumentName}.build.io`, "number", obj.build.io) &&
-            evaluate(typeof obj.build.cpu === "number", `${argumentName}.build.cpu`, "number", obj.build.cpu) &&
-            evaluate(typeof obj.build.mem === "number", `${argumentName}.build.mem`, "number", obj.build.mem), `${argumentName}.build`, "{ io: number; cpu: number; mem: number; }", obj.build) &&
-        evaluate(Array.isArray(obj.plugins) &&
-            obj.plugins.every((e: any) =>
-                isPluginData(e) as boolean
-            ), `${argumentName}.plugins`, "import(\"/home/simplyalec/WebstormProjects/SSManagerV3/src/core/plugin/Plugin\").PluginData[]", obj.plugins) &&
-        evaluate(typeof obj.maxPlayers === "number", `${argumentName}.maxPlayers`, "number", obj.maxPlayers) &&
-        evaluate(typeof obj.isInstalled === "boolean", `${argumentName}.isInstalled`, "boolean", obj.isInstalled)
+        isGameData(obj.game) as boolean &&
+        typeof obj.id === "string" &&
+        typeof obj.port === "number" &&
+        typeof obj.build === "object" &&
+        typeof obj.build.io === "number" &&
+        typeof obj.build.cpu === "number" &&
+        typeof obj.build.mem === "number" &&
+        Array.isArray(obj.plugins) &&
+        obj.plugins.every((e: any) =>
+            isPluginData(e) as boolean
+        ) &&
+        typeof obj.maxPlayers === "number" &&
+        typeof obj.isInstalled === "boolean"
     )
 }
