@@ -1,7 +1,7 @@
 import {Gameserver} from "../../../core/gameserver/Gameserver";
 
 export class ServerMiddleware {
-    public fillServer = async (req, res, next) => {
+    public static fillServer = async (req, res, next) => {
         if (!req.params.server) {
             return next(new Error("NO_SERVER_PROVIDED"));
         }

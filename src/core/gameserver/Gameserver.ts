@@ -17,6 +17,14 @@ export enum ServerStatus {
     MGTHALT = "MGT_HALT"
 }
 
+/** @see {isServerEditPayload} ts-auto-guard:type-guard */
+export interface ServerEditPayload {
+    build: BuildData,
+    port: number,
+    maxPlayers: number,
+    game: GameData
+}
+
 /** @see {isBuildData} ts-auto-guard:type-guard */
 export interface BuildData {
     io: number,
@@ -28,7 +36,7 @@ export interface BuildData {
 export interface GameserverData {
     game: GameData,
     id: string,
-    port: number,
+    port?: number,
     build: {
         io: number,
         cpu: number,
@@ -208,8 +216,18 @@ export class Gameserver extends EventEmitter {
             throw new Error("PORT_IN_USE");
         }
 
-        if (data.port > SSManagerV3.instance.config.servers.maxPort || data.port < SSManagerV3.instance.config.servers.minPort) {
+        if (!data.port) {
+            const contenderPort = Gameserver.findNextPort();
+
+            if (contenderPort != -1) {
+                data.port = contenderPort
+            } else {
+                throw new Error("NO_PORTS_AVAILABLE");
+            }
+
+        } else if (data.port > SSManagerV3.instance.config.servers.maxPort || data.port < SSManagerV3.instance.config.servers.minPort) {
             throw new Error("PORT_OUT_OF_RANGE");
+
         }
 
         // https://docs.docker.com/engine/reference/run/#block-io-bandwidth-blkio-constraint
@@ -288,6 +306,14 @@ export class Gameserver extends EventEmitter {
         this.status = ServerStatus.STOPPING;
         this.dockerHelper.writeToProcess(this.game.stopConsoleCommand); // Lets hope the server decides to listen
         // The server status will be automatically updated when it ends.
+    };
+
+    public edit = async (payload: ServerEditPayload) => {
+        this.port = payload.port;
+        this.build = payload.build;
+        this.maxPlayers = payload.maxPlayers;
+
+        await this.saveData();
     };
 
     public kill = async () => {

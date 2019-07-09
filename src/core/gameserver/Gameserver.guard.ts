@@ -2,8 +2,8 @@
  * Generated type guards for "Gameserver.ts".
  * WARNING: Do not manually change this file.
  */
-import { BuildData, GameserverData } from "./Gameserver";
 import { isGameData } from "../game/Game.guard";
+import { ServerEditPayload, BuildData, GameserverData } from "./Gameserver";
 import { isPluginData } from "../plugin/Plugin.guard";
 
 function evaluate(
@@ -19,6 +19,16 @@ function evaluate(
         )
     }
     return isCorrect
+}
+
+export function isServerEditPayload(obj: any, argumentName: string = "serverEditPayload"): obj is ServerEditPayload {
+    return (
+        typeof obj === "object" &&
+        evaluate(isBuildData(obj.build) as boolean, `${argumentName}.build`, "import(\"/home/simplyalec/WebstormProjects/SSManagerV3/src/core/gameserver/Gameserver\").BuildData", obj.build) &&
+        evaluate(typeof obj.port === "number", `${argumentName}.port`, "number", obj.port) &&
+        evaluate(typeof obj.maxPlayers === "number", `${argumentName}.maxPlayers`, "number", obj.maxPlayers) &&
+        evaluate(isGameData(obj.game) as boolean, `${argumentName}.game`, "import(\"/home/simplyalec/WebstormProjects/SSManagerV3/src/core/game/Game\").GameData", obj.game)
+    )
 }
 
 export function isBuildData(obj: any, argumentName: string = "buildData"): obj is BuildData {
