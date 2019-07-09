@@ -41,11 +41,7 @@ export class GameserverController implements IController{
                 max: 60
             }),
             check("contents").exists(),
-            check("contents").isString(),
-            check("contents").isLength({
-                min: 0,
-                max: 1000 * 1000 * 1000
-            }),
+            check("contents").isString()
         ], this.writeFile);
         router.post("/gameserver/:server/fs/removeFile", [
             SecretMiddleware.requireSecret,

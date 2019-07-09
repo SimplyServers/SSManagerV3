@@ -6,7 +6,7 @@ import * as userid from "userid";
 
 export class FilesystemHelper extends Helper {
 
-    public static readonly MAX_FILE_SIZE = 1000000;
+    public static readonly MAX_FILE_SIZE = 500 * 1000 * 1000;
 
     public static checkEdible = (fullPath: string): boolean => {
         const ext = path.extname(fullPath);
@@ -77,6 +77,10 @@ export class FilesystemHelper extends Helper {
 
         if (!FilesystemHelper.checkEdible(fullPath)) {
             throw new Error("FILE_NOT_EDIBLE");
+        }
+
+        if (Buffer.byteLength(contents, "utf8") > FilesystemHelper.MAX_FILE_SIZE) {
+            throw new Error("EXCEEDS_BYTE_LIMIT");
         }
 
         await fs.outputFile(fullPath, contents);
