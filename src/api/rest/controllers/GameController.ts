@@ -3,7 +3,7 @@ import {IController} from "./IController";
 import {Router} from "express";
 import {SecretMiddleware} from "../middleware/SecretMiddleware";
 
-export class GameController implements IController{
+export class GameController implements IController {
     initRoutes(router: Router): void {
         router.get("/game/", [
             SecretMiddleware.requireSecret
@@ -11,8 +11,8 @@ export class GameController implements IController{
     }
 
     public getGames = (req, res, next) => {
-      return res.json({
-          games: Game.loadedGames
-      })
+        return res.json({
+            games: Game.loadedGames
+        })
     };
 }

@@ -48,10 +48,10 @@ export class Game {
         const data = await FSUtils.dirToJson(path.join(SSManagerV3.instance.root, "../localstorage/games")) as unknown as Array<GameData>;
         Game.loadedGames = data.map(gameData => {
             if (!isGameData(gameData)) {
-                throw new Error("INVALID_GAME_DATA_CONFIG")
+                throw new Error("INVALID_GAME_DATA_CONFIG");
             }
 
-            return new Game(gameData)
+            return new Game(gameData);
         });
 
         SSManagerV3.instance.logger.verbose("Loaded games: " + Game.loadedGames.length);

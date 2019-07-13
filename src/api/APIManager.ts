@@ -1,18 +1,15 @@
 import * as Express from "express";
+import {Router} from "express";
 import * as bodyParser from "body-parser";
 import * as https from "https";
 import * as SocketIO from "socket.io";
 
-import ExpressValidator = require("express-validator");
-
 import {CertUtils} from "../utils/CertUtils";
 import {SSManagerV3} from "../SSManagerV3";
 import {GameController} from "./rest/controllers/GameController";
-import {Router} from "express";
 import {GameserverController} from "./rest/controllers/GameserverController";
 import {NodeController} from "./rest/controllers/NodeController";
 import {PluginController} from "./rest/controllers/PluginController";
-import {ValidationError} from "express-validator/src/base";
 import {ServerConsole} from "./socket/ServerConsole";
 
 export class APIManager {
@@ -120,8 +117,6 @@ export class APIManager {
 
         this._http.listen(SSManagerV3.instance.config.api.port);
     };
-
-
 
 
 }

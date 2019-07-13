@@ -1,5 +1,5 @@
-import { Router } from "express";
+import {Router} from "express";
 
 export interface IController {
-  initRoutes(router: Router): void;
+    initRoutes(router: Router): void;
 }

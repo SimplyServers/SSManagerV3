@@ -10,7 +10,7 @@ export class FSUtils {
 
     static executeCommand = async (format: string, options: ExecOptions = {}) => {
         await new Promise((resolve, reject) => {
-            proc.exec(format, options,(err) => {
+            proc.exec(format, options, (err) => {
                 if (err) {
                     return reject(err);
                 } else {

@@ -3,7 +3,7 @@ import {IController} from "./IController";
 import {Router} from "express";
 import {SecretMiddleware} from "../middleware/SecretMiddleware";
 
-export class PluginController implements IController{
+export class PluginController implements IController {
     initRoutes(router: Router): void {
         router.get("/plugin/", [
             SecretMiddleware.requireSecret

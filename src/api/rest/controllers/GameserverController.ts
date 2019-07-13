@@ -8,11 +8,11 @@ import {isGameserverData, isServerEditPayload} from "../../../core/gameserver/Ga
 import {FilesystemHelper} from "../../../core/gameserver/helpers/FilesystemHelper";
 
 // Get types for
-export interface RequestAppendedServer extends Request{
+export interface RequestAppendedServer extends Request {
     server: Gameserver
 }
 
-export class GameserverController implements IController{
+export class GameserverController implements IController {
     initRoutes(router: Router): void {
         router.get("/gameserver/", [
             SecretMiddleware.requireSecret
@@ -177,7 +177,7 @@ export class GameserverController implements IController{
             )
         })
     };
-    
+
     public writeFile = async (req: RequestAppendedServer, res, next) => {
         try {
             await req.server.fsHelper.writeFile(req.body.path, req.body.contents);
@@ -186,7 +186,7 @@ export class GameserverController implements IController{
             return next(e);
         }
     };
-    
+
     public removeFile = async (req: RequestAppendedServer, res, next) => {
         try {
             await req.server.fsHelper.removeFile(req.body.path);
@@ -195,7 +195,7 @@ export class GameserverController implements IController{
             return next(e);
         }
     };
-    
+
     public removeFolder = async (req: RequestAppendedServer, res, next) => {
         try {
             await req.server.fsHelper.removeFolder(req.body.path);
@@ -204,17 +204,17 @@ export class GameserverController implements IController{
             return next(e);
         }
     };
-    
+
     public getFileContents = async (req: RequestAppendedServer, res, next) => {
         try {
             return res.json({
                 contents: await req.server.fsHelper.getFileContents(req.body.path)
             });
-        }catch (e) {
+        } catch (e) {
             return next(e);
         }
     };
-    
+
     public getFolderContents = async (req: RequestAppendedServer, res, next) => {
         try {
             return res.json({
@@ -224,7 +224,7 @@ export class GameserverController implements IController{
             return next(e);
         }
     };
-    
+
     public executeCommand = async (req: RequestAppendedServer, res, next) => {
         try {
             await req.server.dockerHelper.writeToProcess(req.body.command);
@@ -233,7 +233,7 @@ export class GameserverController implements IController{
             return next(e);
         }
     };
-    
+
     public power = async (req: RequestAppendedServer, res, next) => {
         try {
             switch (req.params.power) {
@@ -254,7 +254,7 @@ export class GameserverController implements IController{
             return next(e);
         }
     };
-    
+
     public reinstall = async (req: RequestAppendedServer, res, next) => {
         try {
             await req.server.game.reinstallGame(req.server);
@@ -263,7 +263,7 @@ export class GameserverController implements IController{
             return next(e);
         }
     };
-    
+
     public edit = async (req: RequestAppendedServer, res, next) => {
         try {
             await req.server.edit(req.body.config);
@@ -272,7 +272,7 @@ export class GameserverController implements IController{
             return next(e);
         }
     };
-    
+
     public update = async (req: RequestAppendedServer, res, next) => {
         try {
             await req.server.game.updateGame(req.server);
@@ -281,7 +281,7 @@ export class GameserverController implements IController{
             return next(e);
         }
     };
-    
+
     public install = async (req: RequestAppendedServer, res, next) => {
         try {
             await req.server.game.installGame(req.server);
@@ -290,7 +290,7 @@ export class GameserverController implements IController{
             return next(e);
         }
     };
-    
+
     public remove = async (req: RequestAppendedServer, res, next) => {
         try {
             await req.server.deleteServer();
@@ -299,7 +299,7 @@ export class GameserverController implements IController{
             return next(e);
         }
     };
-    
+
     public removePlugin = async (req: RequestAppendedServer, res, next) => {
         try {
             await req.server.removePlugin(req.body.plugin);
@@ -308,7 +308,7 @@ export class GameserverController implements IController{
             return next(e);
         }
     };
-    
+
     public installPlugin = async (req: RequestAppendedServer, res, next) => {
         try {
             await req.server.installPlugin(req.body.plugin);
@@ -317,7 +317,7 @@ export class GameserverController implements IController{
             return next(e);
         }
     };
-    
+
     public getPlugins = async (req: RequestAppendedServer, res, next) => {
         try {
             return res.json({
@@ -327,7 +327,7 @@ export class GameserverController implements IController{
             return next(e);
         }
     };
-    
+
     public add = async (req, res, next) => {
         const newServer = new Gameserver(req.body.config);
         await newServer.init();
