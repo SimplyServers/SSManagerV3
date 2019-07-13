@@ -2,6 +2,7 @@ import {FSUtils} from "../../utils/FSUtils";
 
 import * as path from "path";
 import {SSManagerV3} from "../../SSManagerV3";
+import {isPluginData} from "./Plugin.guard";
 
 /** @see {isPluginData} ts-auto-guard:type-guard */
 export interface PluginData {
@@ -18,7 +19,13 @@ export class Plugin {
     static loadPlugins = async () => {
         Plugin.loadedPlugins = [];
         const data = await FSUtils.dirToJson(path.join(SSManagerV3.instance.root, "../localstorage/plugins")) as unknown as Array<PluginData>;
-        Plugin.loadedPlugins = data.map(pluginData => new Plugin(pluginData));
+        Plugin.loadedPlugins = data.map(pluginData => {
+            if (!isPluginData(pluginData)) {
+                throw new Error("INVALID_PLUGIN_DATA_CONFIG")
+            }
+
+            return new Plugin(pluginData)
+        });
 
         SSManagerV3.instance.logger.verbose("Loaded plugins: " + Plugin.loadedPlugins.length);
     };

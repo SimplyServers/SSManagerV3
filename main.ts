@@ -51,6 +51,13 @@ import * as util from "util";
         console.log("Starting... (verbose: " + verbose + ")");
 
         const manager = new SSManagerV3();
-        await manager.init(verbose); // Ignoring the promise in this case is totally ok
+
+        try {
+            await manager.init(verbose); // Ignoring the promise in this case is totally ok
+
+        } catch (e) {
+            console.error("[error] A fatal error has occurred while initialization: ", e);
+            console.error("This is likely caused by an configuration issue. Please consult the documentation and retry.")
+        }
     }
 })();

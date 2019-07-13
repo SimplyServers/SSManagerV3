@@ -3,6 +3,7 @@ import {FSUtils} from "../../utils/FSUtils";
 import * as path from "path";
 import {SSManagerV3} from "../../SSManagerV3";
 import {Gameserver, ServerStatus} from "../gameserver/Gameserver";
+import {isGameData} from "./Game.guard";
 
 /** @see {isVerifyFile} ts-auto-guard:type-guard */
 export interface VerifyFile {
@@ -45,7 +46,13 @@ export class Game {
     static loadGames = async () => {
         Game.loadedGames = [];
         const data = await FSUtils.dirToJson(path.join(SSManagerV3.instance.root, "../localstorage/games")) as unknown as Array<GameData>;
-        Game.loadedGames = data.map(gameData => new Game(gameData));
+        Game.loadedGames = data.map(gameData => {
+            if (!isGameData(gameData)) {
+                throw new Error("INVALID_GAME_DATA_CONFIG")
+            }
+
+            return new Game(gameData)
+        });
 
         SSManagerV3.instance.logger.verbose("Loaded games: " + Game.loadedGames.length);
     };

@@ -8,6 +8,7 @@ import {DockerHelper} from "./helpers/DockerHelper";
 import * as fs from "fs-extra";
 import * as util from "util";
 import {EventEmitter} from 'events';
+import {isGameserverData} from "./Gameserver.guard";
 
 export enum ServerStatus {
     RUNNING = "RUNNING",
@@ -69,7 +70,13 @@ export class Gameserver extends EventEmitter {
     static loadServers = async () => {
         Gameserver.loadedServers = [];
         const data = await FSUtils.dirToJson(path.join(SSManagerV3.instance.root, "../localstorage/servers")) as unknown as Array<GameserverData>;
-        Gameserver.loadedServers = data.map(gameserverData => new Gameserver(gameserverData));
+        Gameserver.loadedServers = data.map(gameserverData => {
+            if(!isGameserverData(gameserverData)) {
+                throw new Error("INVALID_SERVER_DATA_CONFIG")
+            }
+
+            return new Gameserver(gameserverData)
+        });
 
         SSManagerV3.instance.logger.verbose("Loaded servers: " + Gameserver.loadedServers.length);
 
