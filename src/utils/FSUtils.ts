@@ -61,18 +61,21 @@ export class FSUtils {
             }
 
             // Parse the data in the file as JSON
-            const jsonData = await fs.readJson(path.join(dataFolder, fileName));
+            try {
+                const jsonData = await fs.readJson(path.join(dataFolder, fileName));
 
-            // Something weird may of happened.
-            if (jsonData === undefined) {
-                SSManagerV3.instance.logger.error("Failed to load JSON to array; JSON at " + fileName + " is invalid.");
+                // Something weird may of happened.
+                if (!jsonData) {
+                    SSManagerV3.instance.logger.error("Failed to load JSON to array; JSON at " + fileName + " is invalid.");
+                    return;
+                }
+
+                // Append the game to the games array.
+                returnArr.push(jsonData);
+            } catch (e) {
+                SSManagerV3.instance.logger.error("Failed to load file containing JSON: " + e);
                 return;
             }
-
-            SSManagerV3.instance.logger.verbose("Loaded: " + fileName);
-
-            // Append the game to the games array.
-            returnArr.push(jsonData);
         }));
 
         return returnArr;

@@ -78,33 +78,6 @@ export class SSManagerV3 {
 
         const apiManager = new APIManager();
         await apiManager.loadServer();
-
-        // const testServer = new Gameserver({
-        //     plugins: [],
-        //     maxPlayers: 69,
-        //     isInstalled: false,
-        //     build: {
-        //         cpu: 1000,
-        //         io: 1000,
-        //         mem: 1000
-        //     },
-        //     port: 25565,
-        //     id: "testing",
-        //     game: Game.loadedGames[0].exportData()
-        // });
-        //
-        //
-        // await testServer.init();
-        // SSManagerV3.instance.logger.verbose("executing test for installing");
-        // await Gameserver.loadedServers[0].game.installGame(Gameserver.loadedServers[0]);
-        //
-        // SSManagerV3.instance.logger.verbose("start the server");
-        // await Gameserver.loadedServers[0].start();
-        //
-        // setInterval(() => {
-        //     SSManagerV3.instance.logger.verbose("testing server removal");
-        //     Gameserver.loadedServers[0].deleteServer();
-        // }, 40000);
     }
 
 }

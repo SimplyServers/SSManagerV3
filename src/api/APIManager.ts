@@ -13,6 +13,7 @@ import {GameserverController} from "./rest/controllers/GameserverController";
 import {NodeController} from "./rest/controllers/NodeController";
 import {PluginController} from "./rest/controllers/PluginController";
 import {ValidationError} from "express-validator/src/base";
+import {ServerConsole} from "./socket/ServerConsole";
 
 export class APIManager {
     get express() {
@@ -23,25 +24,25 @@ export class APIManager {
         this._express = value;
     }
 
-    get http() {
+    get http(): https.Server {
         return this._http;
     }
 
-    set http(value) {
+    set http(value: https.Server) {
         this._http = value;
     }
 
-    get io() {
+    get io(): SocketIO.Server {
         return this._io;
     }
 
-    set io(value) {
+    set io(value: SocketIO.Server) {
         this._io = value;
     }
 
     private _express: Express.Express;
-    private _http;
-    private _io;
+    private _http: https.Server;
+    private _io: SocketIO.Server;
 
     public prepareExpress = async () => {
         this.express = Express();
@@ -100,7 +101,8 @@ export class APIManager {
     };
 
     public prepareSocket = async () => {
-
+        const console = new ServerConsole(this.io.of("/console"));
+        console.init();
     };
 
     public loadServer = async () => {

@@ -4,6 +4,7 @@ export class Logger {
 
     constructor(verbose: boolean) {
         this._verbose = verbose;
+        this.verbose("logger init... verbose set to " + verbose);
     }
 
     public info = (data: string) => {

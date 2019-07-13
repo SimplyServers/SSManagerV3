@@ -27,7 +27,7 @@
   "verify": [
     {
       "path": "server.jar",
-      "sha1": "71c8491dad1f5c5d94104f50383f7265d70f974a"
+      "hash": "71c8491dad1f5c5d94104f50383f7265d70f974a"
     }
   ]
 }
