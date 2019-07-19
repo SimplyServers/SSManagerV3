@@ -6,7 +6,7 @@ import {SecretMiddleware} from "../middleware/SecretMiddleware";
 
 export class NodeController implements IController {
     initRoutes(router: Router): void {
-        router.get("/node/", [
+        router.get("/status/", [
             SecretMiddleware.requireSecret
         ], this.getStatus);
     }

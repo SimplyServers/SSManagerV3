@@ -5,7 +5,7 @@ import {SecretMiddleware} from "../middleware/SecretMiddleware";
 
 export class GameController implements IController {
     initRoutes(router: Router): void {
-        router.get("/game/", [
+        router.get("/games/", [
             SecretMiddleware.requireSecret
         ], this.getGames);
     }

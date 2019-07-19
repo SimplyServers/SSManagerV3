@@ -5,7 +5,7 @@ import {SecretMiddleware} from "../middleware/SecretMiddleware";
 
 export class PluginController implements IController {
     initRoutes(router: Router): void {
-        router.get("/plugin/", [
+        router.get("/plugins/", [
             SecretMiddleware.requireSecret
         ], this.getPlugins);
     }

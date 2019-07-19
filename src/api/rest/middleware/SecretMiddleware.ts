@@ -10,7 +10,7 @@ export class SecretMiddleware {
             return next(new Error("BAD_TOKEN"));
         }
 
-        next();
+        return next();
     };
 
     private static getTokenFromHeaders = (req) => {

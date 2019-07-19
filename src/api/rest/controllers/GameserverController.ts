@@ -14,14 +14,14 @@ export interface RequestAppendedServer extends Request {
 
 export class GameserverController implements IController {
     initRoutes(router: Router): void {
-        router.get("/gameserver/", [
+        router.get("/gameservers/", [
             SecretMiddleware.requireSecret
         ], this.getGameservers);
-        router.get("/gameserver/:server", [
+        router.get("/gameservers/:server", [
             SecretMiddleware.requireSecret,
             ServerMiddleware.fillServer
         ], this.getServer);
-        router.post("/gameserver/:server/checkAllowed", [
+        router.post("/gameservers/:server/checkAllowed", [
             SecretMiddleware.requireSecret,
             ServerMiddleware.fillServer,
             check("path").exists(),
@@ -31,7 +31,7 @@ export class GameserverController implements IController {
                 max: 60
             }),
         ], this.checkPathAllowed);
-        router.post("/gameserver/:server/fs/writeFile", [
+        router.post("/gameservers/:server/fs/writeFile", [
             SecretMiddleware.requireSecret,
             ServerMiddleware.fillServer,
             check("path").exists(),
@@ -43,7 +43,7 @@ export class GameserverController implements IController {
             check("contents").exists(),
             check("contents").isString()
         ], this.writeFile);
-        router.post("/gameserver/:server/fs/removeFile", [
+        router.post("/gameservers/:server/fs/removeFile", [
             SecretMiddleware.requireSecret,
             ServerMiddleware.fillServer,
             check("path").exists(),
@@ -53,7 +53,7 @@ export class GameserverController implements IController {
                 max: 60
             })
         ], this.removeFile);
-        router.post("/gameserver/:server/fs/removeFolder", [
+        router.post("/gameservers/:server/fs/removeFolder", [
             SecretMiddleware.requireSecret,
             ServerMiddleware.fillServer,
             check("path").exists(),
@@ -63,7 +63,7 @@ export class GameserverController implements IController {
                 max: 60
             })
         ], this.removeFolder);
-        router.post("/gameserver/:server/fs/fileContents", [
+        router.post("/gameservers/:server/fs/fileContents", [
             SecretMiddleware.requireSecret,
             ServerMiddleware.fillServer,
             check("path").exists(),
@@ -73,7 +73,7 @@ export class GameserverController implements IController {
                 max: 60
             })
         ], this.getFileContents);
-        router.post("/gameserver/:server/fs/folderContents", [
+        router.post("/gameservers/:server/fs/folderContents", [
             SecretMiddleware.requireSecret,
             ServerMiddleware.fillServer,
             check("path").exists(),
@@ -83,7 +83,7 @@ export class GameserverController implements IController {
                 max: 60
             })
         ], this.getFolderContents);
-        router.post("/gameserver/:server/control/execute", [
+        router.post("/gameservers/:server/control/execute", [
             SecretMiddleware.requireSecret,
             ServerMiddleware.fillServer,
             check("command").exists(),
@@ -93,15 +93,15 @@ export class GameserverController implements IController {
                 max: 60
             })
         ], this.executeCommand);
-        router.get("/gameserver/:server/control/power/:power", [
+        router.get("/gameservers/:server/control/power/:power", [
             SecretMiddleware.requireSecret,
             ServerMiddleware.fillServer,
         ], this.power);
-        router.get("/gameserver/:server/control/reinstall", [
+        router.get("/gameservers/:server/control/reinstall", [
             SecretMiddleware.requireSecret,
             ServerMiddleware.fillServer,
         ], this.reinstall);
-        router.post("/gameserver/:server/edit", [
+        router.post("/gameservers/:server/edit", [
             SecretMiddleware.requireSecret,
             ServerMiddleware.fillServer,
             check("config").exists(),
@@ -113,35 +113,35 @@ export class GameserverController implements IController {
                 return input;
             })
         ], this.edit);
-        router.get("/gameserver/:server/update", [
+        router.get("/gameservers/:server/update", [
             SecretMiddleware.requireSecret,
             ServerMiddleware.fillServer
         ], this.update);
-        router.get("/gameserver/:server/install", [
+        router.get("/gameservers/:server/install", [
             SecretMiddleware.requireSecret,
             ServerMiddleware.fillServer
         ], this.install);
-        router.get("/gameserver/:server/remove", [
+        router.get("/gameservers/:server/remove", [
             SecretMiddleware.requireSecret,
             ServerMiddleware.fillServer
         ], this.remove);
-        router.post("/gameserver/:server/plugin/remove", [
+        router.post("/gameservers/:server/plugin/remove", [
             SecretMiddleware.requireSecret,
             ServerMiddleware.fillServer,
             check("plugin").exists(),
             check("plugin").isString(),
         ], this.removePlugin);
-        router.post("/gameserver/:server/plugin/install", [
+        router.post("/gameservers/:server/plugin/install", [
             SecretMiddleware.requireSecret,
             ServerMiddleware.fillServer,
             check("plugin").exists(),
             check("plugin").isString(),
         ], this.installPlugin);
-        router.get("/gameserver/:server/plugin/", [
+        router.get("/gameservers/:server/plugin/", [
             SecretMiddleware.requireSecret,
             ServerMiddleware.fillServer
         ], this.getPlugins);
-        router.post("/gameserver/add", [
+        router.post("/gameservers/add", [
             SecretMiddleware.requireSecret,
             check("config").exists(),
             check("config").customSanitizer(input => {
